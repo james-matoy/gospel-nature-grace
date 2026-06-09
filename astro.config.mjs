@@ -8,7 +8,7 @@ import cloudflare from '@astrojs/cloudflare'; // <-- 1. This import was missing
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'static',
+  output: 'server',
   adapter: cloudflare(), // <-- 2. This adapter config was missing
   integrations: [react(), markdoc(), keystatic()],
   vite: {
