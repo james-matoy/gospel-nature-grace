@@ -1,0 +1,141 @@
+---
+export const prerender = true;
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('blog');
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Written Word" description="Reflections on Gospel, Nature, and Grace" currentPath="/blog">
+  <!-- Hero / Page Title -->
+  <section class="relative pt-32 pb-24 px-6 text-center">
+    <div class="max-w-[800px] mx-auto">
+      <h1 class="font-display-lg-mobile md:text-display-lg text-primary dark:text-primary-fixed-dim text-balance mb-6">
+        Written Word
+      </h1>
+      <p class="font-headline-sm italic text-tertiary dark:text-tertiary-fixed-dim leading-relaxed opacity-90 max-w-xl mx-auto">
+        &ldquo;In the beginning was the Word, and the Word was with God, and the Word was God.&rdquo;<br />
+        <span class="font-label-md text-label-md text-outline dark:text-outline-variant">&mdash; John 1:1</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- Sticky Search & Filter Controls -->
+  <div class="sticky top-16 z-40 bg-surface/90 dark:bg-on-background/90 backdrop-blur-md border-b border-outline-variant/40 dark:border-outline/40 transition-colors">
+    <div class="max-w-[1000px] mx-auto px-6 py-4 flex items-center gap-4 overflow-x-auto no-scrollbar">
+      <div class="relative flex-1 min-w-[200px]">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline dark:text-outline-variant text-sm">search</span>
+        <input
+          type="text"
+          placeholder="Search reflections..."
+          class="w-full pl-10 pr-4 py-2.5 bg-surface-container-high dark:bg-surface-container-highest text-on-surface dark:text-inverse-on-surface border-none outline-none font-body-md text-body-md placeholder:text-outline dark:placeholder:text-outline-variant transition-colors"
+        />
+      </div>
+      <div class="flex gap-2 flex-shrink-0">
+        <button class="font-label-md text-label-md px-4 py-2.5 whitespace-nowrap bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed transition-colors">All Reflections</button>
+        <button class="font-label-md text-label-md px-4 py-2.5 whitespace-nowrap text-outline dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors">Forest Paths</button>
+        <button class="font-label-md text-label-md px-4 py-2.5 whitespace-nowrap text-outline dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors">Theology</button>
+        <button class="font-label-md text-label-md px-4 py-2.5 whitespace-nowrap text-outline dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors">Light</button>
+        <button class="font-label-md text-label-md px-4 py-2.5 whitespace-nowrap text-outline dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors">Quiet Spaces</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-[1000px] mx-auto px-6 py-16 space-y-16">
+    {
+      posts.length === 0 ? (
+        <p class="text-center font-body-lg text-body-lg text-outline dark:text-outline-variant py-24">
+          No reflections yet. The first leaf has yet to fall&hellip;
+        </p>
+      ) : (
+        posts.map((post, index) => (
+          <article class="reveal grid grid-cols-1 md:grid-cols-2 gap-10 items-center" style={`transition-delay: ${index * 100}ms`}>
+            <div class={`${index % 2 === 0 ? 'order-2 md:order-1' : 'order-2 md:order-2'}`}>
+              {post.data.cover ? (
+                <div class="aspect-[16/9] overflow-hidden rounded-sm">
+                  <img
+                    src={post.data.cover}
+                    alt={post.data.title}
+                    class="w-full h-full object-cover grayscale hover:grayscale-0 hover:scale-105 transition-all duration-700"
+                  />
+                </div>
+              ) : (
+                <div class="aspect-[16/9] bg-surface-container-high dark:bg-surface-container-highest rounded-sm flex items-center justify-center">
+                  <span class="material-symbols-outlined text-outline dark:text-outline-variant text-4xl">auto_stories</span>
+                </div>
+              )}
+            </div>
+            <div class={`${index % 2 === 0 ? 'order-1 md:order-2' : 'order-1 md:order-1'} space-y-6`}>
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <span class="h-px w-6 bg-outline-variant dark:bg-outline"></span>
+                  <span class="font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim uppercase tracking-[0.15em]">
+                    {post.data.category || 'Reflection'}
+                  </span>
+                  <span class="font-label-md text-label-md text-outline dark:text-outline-variant">&middot;</span>
+                  <span class="font-label-md text-label-md text-outline dark:text-outline-variant">
+                    {Math.ceil((post.data.body?.length || 500) / 1000)} min read
+                  </span>
+                </div>
+                <h2 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim leading-tight">
+                  <a href={`/blog/${post.id}`} class="hover:underline decoration-primary/30 dark:decoration-primary-fixed-dim/30 underline-offset-4 transition-all">
+                    {post.data.title}
+                  </a>
+                </h2>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface-variant dark:text-inverse-on-surface leading-relaxed line-clamp-3">
+                {post.data.description || post.data.title}
+              </p>
+              <div class="flex items-center gap-4">
+                <time datetime={post.data.date.toISOString()} class="font-label-md text-label-md text-outline dark:text-outline-variant">
+                  {post.data.date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
+                <a
+                  href={`/blog/${post.id}`}
+                  class="inline-flex items-center gap-2 font-label-md text-label-md text-primary dark:text-primary-fixed-dim group"
+                >
+                  <span class="border-b border-primary/30 dark:border-primary-fixed-dim/30 group-hover:border-primary dark:group-hover:border-primary-fixed-dim transition-all">Read Reflection</span>
+                  <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        ))
+      )
+    }
+
+    <!-- Pull Quote -->
+    <div class="reveal py-16 max-w-2xl mx-auto">
+      <div class="pl-8 border-l-4 border-secondary dark:border-secondary-fixed-dim">
+        <blockquote class="font-headline-md text-headline-sm italic text-primary dark:text-primary-fixed-dim leading-relaxed">
+          &ldquo;The woods are filled with scripture, written not in ink, but in the slow, steady growth of roots reaching toward the Living Water.&rdquo;
+        </blockquote>
+        <p class="mt-6 font-label-md text-label-md text-outline dark:text-outline-variant uppercase tracking-widest">&mdash; From the Journals of Grace</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="reveal flex items-center justify-center gap-4 pt-8 border-t border-outline-variant/30 dark:border-outline/30">
+      <span class="font-label-md text-label-md text-outline dark:text-outline-variant flex items-center gap-2 cursor-not-allowed opacity-50">
+        <span class="material-symbols-outlined text-sm">chevron_left</span>
+        Previous
+      </span>
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 flex items-center justify-center font-label-md text-label-md bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed">1</span>
+        <a href="#" class="w-8 h-8 flex items-center justify-center font-label-md text-label-md text-outline dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors">2</a>
+        <a href="#" class="w-8 h-8 flex items-center justify-center font-label-md text-label-md text-outline dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors">3</a>
+        <span class="font-label-md text-label-md text-outline dark:text-outline-variant">&hellip;</span>
+        <a href="#" class="w-8 h-8 flex items-center justify-center font-label-md text-label-md text-outline dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors">12</a>
+      </div>
+      <a href="#" class="font-label-md text-label-md text-primary dark:text-primary-fixed-dim flex items-center gap-2 hover:underline transition-all">
+        Next
+        <span class="material-symbols-outlined text-sm">chevron_right</span>
+      </a>
+    </nav>
+  </main>
+</BaseLayout>

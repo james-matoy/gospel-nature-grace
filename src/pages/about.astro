@@ -1,0 +1,131 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="About James David Matoy &mdash; Gospel, Nature, and Grace" currentPath="/about">
+  <!-- Page Title -->
+  <section class="relative pt-32 pb-16 px-6 text-center">
+    <div class="max-w-[800px] mx-auto">
+      <h1 class="font-display-lg-mobile md:text-display-lg text-primary dark:text-primary-fixed-dim text-balance mb-6">
+        About the Author
+      </h1>
+      <p class="font-headline-sm italic text-tertiary dark:text-tertiary-fixed-dim leading-relaxed opacity-90 max-w-xl mx-auto">
+        &ldquo;The ground of all being is revealed in the soil beneath our feet.&rdquo;
+      </p>
+    </div>
+  </section>
+  
+
+  <main class="max-w-[1000px] mx-auto px-6 pb-32 space-y-32">
+    <!-- Bio Section -->
+    <section class="reveal grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+      <!-- Author Portrait -->
+      <div class="relative">
+        <div class="aspect-[4/5] overflow-hidden shadow-2xl rounded-sm">
+          <img
+            alt="James David Matoy portrait"
+            class="w-full h-full object-cover"
+            src="/images/author/profile.png"
+          />
+        </div>
+        <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/10 dark:bg-primary-fixed-dim/10 rounded-full -z-10"></div>
+      </div>
+
+      <!-- Bio Text -->
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <div class="flex items-center gap-4">
+            <span class="h-px w-8 bg-outline-variant dark:bg-outline"></span>
+            <span class="font-label-md text-label-md text-outline dark:text-outline-variant uppercase tracking-[0.2em]">The Steward</span>
+          </div>
+          <h2 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim leading-tight">
+            James David Matoy
+          </h2>
+          <p class="font-label-md text-label-md text-outline dark:text-outline-variant italic">Theologian, Naturalist, Scribe of the Wild</p>
+        </div>
+
+        <div class="space-y-6 font-body-md text-body-md text-on-surface-variant dark:text-inverse-on-surface leading-relaxed">
+          <p>
+            James David Matoy is a writer, theologian, and wandering naturalist whose work seeks to trace the fingerprints of the Divine across the landscapes of the created world. Raised between the quiet discipline of rural life and the profound silences of ancient forests, he found early on that the language of faith was written not only in scripture, but in the turning of seasons, the patience of trees, and the unforced rhythms of grace that pulse through all living things.
+          </p>
+          <p>
+            After years of formal study in theology and philosophy&mdash;and a brief, formative stint living in a remote cabin without electricity&mdash;James began keeping what he calls "field notes of the soul." These writings, collected here as <em>Gospel, Nature, and Grace</em>, are an attempt to articulate the ineffable: the ways in which the natural world serves as both parable and sacrament, revealing the character of the Creator in every leaf, stone, and stream.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inset Blockquote -->
+    <div class="reveal max-w-3xl mx-auto">
+      <div class="pl-8 border-l-4 border-secondary dark:border-secondary-fixed-dim">
+        <blockquote class="font-headline-md text-headline-sm italic text-primary dark:text-primary-fixed-dim leading-relaxed">
+          &ldquo;The theologian who ignores the natural world ignores the first and most persistent revelation of God. The naturalist who ignores the spiritual world sees only the husk of things. I seek to live in the fertile tension between the two&mdash;where mystery meets moss, where doctrine meets dew.&rdquo;
+        </blockquote>
+        <p class="mt-6 font-label-md text-label-md text-outline dark:text-outline-variant uppercase tracking-widest">&mdash; James David Matoy, <em>Field Notes from the Orchard</em></p>
+      </div>
+    </div>
+
+    <!-- Agricultural Mosaic / Cycle of Growth -->
+    <section class="reveal space-y-12">
+      <div class="text-center max-w-2xl mx-auto space-y-4">
+        <div class="flex items-center justify-center gap-4">
+          <span class="h-px w-8 bg-outline-variant dark:bg-outline"></span>
+          <span class="font-label-md text-label-md text-outline dark:text-outline-variant uppercase tracking-[0.2em]">The Cycle of Growth</span>
+          <span class="h-px w-8 bg-outline-variant dark:bg-outline"></span>
+        </div>
+        <h2 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">
+          Agricultural Mosaic
+        </h2>
+        <p class="font-body-md text-body-md text-on-surface-variant dark:text-inverse-on-surface leading-relaxed">
+          The spiritual life, like the agrarian year, moves through seasons of preparation, planting, cultivation, and harvest&mdash;each with its own kind of grace.
+        </p>
+      </div>
+
+      <!-- Image Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Planting -->
+        <div class="group relative overflow-hidden rounded-sm aspect-[4/5] cursor-pointer">
+          <img
+            alt="Planting seeds in rich soil"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            src="/images/author/planting.png"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <span class="font-label-md text-label-md text-primary-fixed-dim tracking-widest uppercase">Planting</span>
+            <h3 class="font-headline-sm text-headline-sm text-white mt-1">Seeds of Intention</h3>
+          </div>
+        </div>
+
+        <!-- Cultivating -->
+        <div class="group relative overflow-hidden rounded-sm aspect-[4/5] cursor-pointer">
+          <img
+            alt="Tending a garden"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            src="/images/author/cultivating.png"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <span class="font-label-md text-label-md text-primary-fixed-dim tracking-widest uppercase">Cultivating</span>
+            <h3 class="font-headline-sm text-headline-sm text-white mt-1">Patience & Prayer</h3>
+          </div>
+        </div>
+
+        <!-- Bearing Fruit -->
+        <div class="group relative overflow-hidden rounded-sm aspect-[4/5] cursor-pointer">
+          <img
+            alt="Harvest of fruits"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            src="/images/author/bearing-fruit.png"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <span class="font-label-md text-label-md text-primary-fixed-dim tracking-widest uppercase">Bearing Fruit</span>
+            <h3 class="font-headline-sm text-headline-sm text-white mt-1">The Harvest of Grace</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
