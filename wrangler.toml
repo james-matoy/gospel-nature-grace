@@ -1,7 +1,0 @@
-name = "gospel-nature-grace"
-pages_build_output_dir = "dist"
-compatibility_date = "2026-06-09"
-
-# This forces Cloudflare to treat the _worker.js as the entry point
-[site]
-bucket = "./dist"
