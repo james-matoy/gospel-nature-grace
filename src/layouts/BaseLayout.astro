@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 export interface Props {
   title: string;
   description?: string;
@@ -29,7 +31,6 @@ const isAbout = currentPath === '/about';
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     {description && <meta name="description" content={description} />}
-    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
   <body
     class="text-on-background dark:text-inverse-on-surface selection:bg-primary-container selection:text-on-primary-container transition-colors duration-300"
