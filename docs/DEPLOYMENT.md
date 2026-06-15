@@ -87,6 +87,21 @@ Cloudflare Pages serves these static files directly without any server-side proc
 
 No custom copy commands are needed. Pages automatically serves the prerendered HTML from the output directory.
 
+### GitHub Storage Mode
+
+Keystatic is configured to use **GitHub storage** (not local filesystem). This is required because Cloudflare Workers have no persistent filesystem. When the Keystatic admin UI saves content, it commits changes directly to the GitHub repository via the GitHub App.
+
+**`keystatic.config.ts`:**
+```ts
+storage: {
+  kind: 'github',
+  repo: 'james-matoy/gospel-nature-grace',
+  branchPrefix: 'content',
+}
+```
+
+> ⚠️ Remove `SKIP_KEYSTATIC=true` from production environment variables when using GitHub storage — the admin UI must be active to create and edit content via the browser.
+
 ### Static Page Files
 
 | File | Route | Role |
@@ -117,7 +132,7 @@ Astro processes this import at build time, producing a hashed CSS file in `/_ast
 
 ---
 
-## 3. Keystatic CMS via SSR Worker
+## 3. Keystatic CMS via SSR Worker (Working ✅)
 
 ### Architecture
 

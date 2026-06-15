@@ -2,7 +2,9 @@ import { config, fields, collection } from '@keystatic/core';
 
 export default config({
   storage: {
-    kind: 'local',
+    kind: 'github',
+    repo: 'james-matoy/gospel-nature-grace',
+    branchPrefix: 'content',
   },
   collections: {
     blog: collection({
