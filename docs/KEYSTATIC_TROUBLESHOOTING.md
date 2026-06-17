@@ -141,7 +141,7 @@ A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain y
 - **Separate Worker with custom domain** → ✅ Possible, but requires purchasing a domain
 - **Pages Advanced Mode (`_worker.js`)** → ✅ No routes needed, runs natively in Pages (but API still crashes)
 
-**Practical impact:** The routing barrier is real but secondary. Even if routing worked, the `module is not defined` crash would still prevent Keystatic from rendering. A custom domain would fix the routing, but not the Workerd runtime incompatibility.
+**Practical impact:** The routing barrier is real but secondary. Even if routing worked, the `module is not defined` crash would still prevent Keystatic from rendering.
 
 ---
 
@@ -171,9 +171,9 @@ A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain y
 |--------|--------|
 | **Command** | `npx wrangler deploy dist/server/entry.mjs --name gospel-nature-grace-keystatic-worker --config tmp-wrangler.toml` |
 | **Result** | ✅ Worker deployed without static assets, bindings correct |
-| **Keeness** | Deployment worked correctly — URL: `https://gospel-nature-grace-keystatic-worker.matoy-jamesdavid.workers.dev` |
+| **Keeness** | Deployment worked correctly — Worker URL live |
 | **But** | `/keystatic` returned a **blank page** — the `module is not defined` crash still happens |
-| **Status** | This is where we are now — Worker deploys but Keystatic crashes at runtime |
+| **Status** | Worker deploys but Keystatic crashes at runtime |
 
 ### Attempt 4: Pages Advanced Mode (`_worker.js`)
 
@@ -199,7 +199,7 @@ A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain y
 |--------|--------|
 | **Action** | Installed `gospel-nature-grace-cms` GitHub App on `james-matoy/gospel-nature-grace` |
 | **Result** | ✅ App shows as installed with Contents: Read & Write |
-| **Notes** | This was necessary for GitHub storage mode, but the Worker still crashed before it could hit the API |
+| **Notes** | Necessary for GitHub storage mode, but the Worker still crashed before it could hit the API |
 
 ---
 
@@ -214,8 +214,8 @@ A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain y
 | Content schema | ✅ Updated | Added `category`, `description` fields to `src/content.config.ts` |
 | Keystatic config | ✅ Set up | GitHub storage, blog collection, schema, GitHub App credentials |
 | GitHub App | ✅ Installed | `gospel-nature-grace-cms` on `james-matoy/gospel-nature-grace` |
-| KV Namespace | ✅ Created | `gospel-nature-grace-keystatic-worker-session` (id: `a867497b17d74d3fa890e2ea724ab5f5`) |
-| Standalone Worker | ✅ Deployed | `https://gospel-nature-grace-keystatic-worker.matoy-jamesdavid.workers.dev` (but Keystatic crashes) |
+| KV Namespace | ✅ Created | `gospel-nature-grace-keystatic-worker-session` |
+| Standalone Worker | ✅ Deployed | Worker URL live (but Keystatic crashes) |
 
 **Keystatic Admin UI:** ❌ Not functional — `module is not defined` in Workerd runtime blocks rendering
 
@@ -234,7 +234,7 @@ A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain y
 - ✅ Markdown/Markdoc support
 - ✅ No new dependencies to install — just a `public/admin/config.yml` file
 
-**Estimated effort:** 2-3 hours to set up
+**Estimated effort:** 2-3 hours
 
 ### 6.2 Approach B: Standalone Node.js Server + Cloudflare Tunnel
 
@@ -242,28 +242,58 @@ A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain y
 
 **Benefits:**
 - ✅ Keystatic works natively on Node.js — no Workerd conflicts
-- ✅ Can use any framework
 - ✅ Full CMS functionality
 
 **Downsides:**
 - ❌ Monthly cost ($5-10/mo)
 - ❌ Two services to manage
-- ❌ Need a custom domain (or accept a different URL)
+- ❌ Need a custom domain
 
 **Estimated effort:** 4-6 hours
 
-### 6.3 Approach C: Vercel / Netlify Migration
+### 6.3 Approach C: Migrate to Vercel (Recommended — keep Keystatic)
 
-**What it is:** Host the full Astro + Keystatic app on Vercel or Netlify, where Node.js SSR is fully supported.
+**What it is:** Move the entire Astro app to Vercel, which supports full Node.js SSR natively. Keystatic works out of the box.
 
-**Benefits:**
-- ✅ Keystatic works out of the box
-- ✅ Free tier available
-- ✅ Better SSR support
+**Why Vercel over alternatives:**
 
-**Downsides:**
-- ❌ Migration effort (change adapter, update config)
-- ❌ Lose Cloudflare's edge network for static assets
+| Factor | **Netlify** | **Vercel** ✅ | **Render** |
+|--------|------------|-----------|-----------|
+| **SSR support** | ✅ Full Node.js | ✅ Full Node.js | ✅ Full Node.js |
+| **Free build minutes/mo** | 300 | **6,000** | 750 |
+| **Free bandwidth/mo** | 100 GB | 100 GB | 100 GB |
+| **Built-in KV for OAuth** | ✅ Netlify Blobs | ✅ Vercel KV | ❌ Needs $7/mo Redis |
+| **Astro integration** | Good | **First-party** | Manual Docker setup |
+| **Custom domain (free)** | ✅ Yes | ✅ Yes | ✅ Yes |
+
+Render is out because it lacks free KV storage for Keystatic OAuth sessions. Vercel wins over Netlify with 20x more build minutes and first-party Astro support from the framework's creators.
+
+**Migration steps:**
+```bash
+npm install @astrojs/vercel --legacy-peer-deps
+npm uninstall @astrojs/cloudflare --legacy-peer-deps
+```
+
+```js
+// astro.config.mjs — change adapter:
+import vercel from '@astrojs/vercel';
+// instead of: import cloudflare from '@astrojs/cloudflare';
+export default defineConfig({
+  output: 'server',
+  adapter: vercel(),
+  // integrations unchanged: react(), markdoc(), keystatic()
+  // ...
+});
+```
+
+Then:
+1. Remove `wrangler.toml` from project
+2. Restore build command in dashboard to `npm install --legacy-peer-deps && npm run build`
+3. Remove `SESSION` KV binding from dashboard
+4. Push to GitHub, connect repo to Vercel, deploy
+5. Update GitHub App callback URL to Vercel domain
+
+**Estimated effort:** 30-60 minutes
 
 ### 6.4 Approach D: Patch `superstruct` at Build Time
 
@@ -273,20 +303,15 @@ A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain y
 define: { 'typeof module': '"object"' }
 ```
 
-**Why it might work:** The error comes from `superstruct` checking `typeof module !== 'undefined'`. If we define `module` as an empty object at build time, the check passes and `superstruct` continues.
+**Why it might work:** The error comes from `superstruct` checking `typeof module !== 'undefined'`. If we define `module` as an empty object at build time, the check passes.
 
 **Why it might fail:** `superstruct` may also use `module.exports` for exports, which would still crash.
 
-**Estimated effort:** 1-2 hours to test
+**Estimated effort:** 1-2 hours
 
 ### 6.5 Approach E: Explicitly Pass Environment Variables from Cloudflare Bindings
 
-**What it is:** The `@keystatic/astro` integration auto-generates API routes, but in Cloudflare Workers, environment variables come from `context.locals.runtime.env` — not `process.env`. Keystatic might be crashing because it can't find the GitHub credentials.
-
-**The fix would involve:**
-1. Create a custom API route at `src/pages/api/keystatic/[...params].ts` that wraps Keystatic's handler
-2. Explicitly pass Cloudflare runtime bindings into Keystatic
-3. Set `export const prerender = false` so the route is server-rendered
+**What it is:** `@keystatic/astro`'s auto-generated API handler may rely on `process.env` which doesn't exist in Cloudflare Workers. Creating a manual handler with explicit bindings may resolve the 500 error on the login endpoint.
 
 ```ts
 // src/pages/api/keystatic/[...params].ts
@@ -309,8 +334,6 @@ export const ALL = async (context) => {
 };
 ```
 
-**Why it might work:** `@keystatic/astro`'s auto-generated route handler may rely on `process.env` which doesn't exist in Cloudflare Workers. By manually creating the API route and passing bindings explicitly, Keystatic would receive the credentials it needs.
-
 **Why it might fail:** The `module is not defined` crash in `superstruct` would still happen when the Worker loads `@keystatic/core`. This is a separate issue from environment variables.
 
 **Estimated effort:** 2-3 hours
@@ -325,42 +348,38 @@ export const ALL = async (context) => {
 
 ## 7. External Analysis: Gemini's Evaluation
 
-On 2026-06-18, Gemini analyzed the Keystatic-on-Cloudflare issue and provided an independent assessment. Below is a summary of the analysis and a cross-reference to where each finding maps in our own documentation.
+On 2026-06-18, Gemini analyzed the Keystatic-on-Cloudflare issue and provided an independent assessment.
 
 ### 7.1 What Gemini Got Right
 
 | Finding | Our Section | Status |
 |---------|------------|--------|
-| **Path A (Pages Advanced Mode) is the right direction** — The standalone Worker should be removed; everything runs via `_worker.js` inside Pages. | Section 4, Attempt 4 | ✅ Already concluded |
-| **"Silent failure" on HTTP 500** — The Functions log shows `Ok` status but the app returns 500. The Worker ran without a runtime crash, but Keystatic's internal handler returned an error. | Section 5, Attempt 5 | ✅ Documented |
-| **Environment variables may not reach Keystatic** — Cloudflare Workers inject env vars via `context.locals.runtime.env`, not `process.env`. If `@keystatic/astro`'s auto-generated handler reads `process.env`, Keystatic gets empty credentials and returns 500. | Section 6.5 (Approach E) | ✅ Added |
-| **Custom API route with explicit bindings** — Manual passthrough of Cloudflare runtime bindings into Keystatic may resolve credential-related 500 errors. | Section 6.5 with code snippet | ✅ Added |
+| **Path A (Pages Advanced Mode) is the right direction** | Section 4, Attempt 4 | ✅ Already concluded |
+| **"Silent failure" on HTTP 500** — Functions log shows `Ok` but app returns 500 | Section 5, Attempt 5 | ✅ Documented |
+| **Environment variables may not reach Keystatic** | Section 6.5 (Approach E) | ✅ Added |
+| **Custom API route with explicit bindings** | Section 6.5 with code snippet | ✅ Added |
 
 ### 7.2 What Gemini Missed
 
 | Gap | Explanation |
 |-----|-------------|
-| **`module is not defined` is the primary blocker** | The standalone Worker (Section 4, Attempt 3) proved this: the page returns **blank** (not 500) because `superstruct` crashes before any Keystatic code runs, including env var reading. The env var fix would only help **after** the `superstruct` crash is resolved. |
-| **`export const prerender = false` is unnecessary** | With `output: 'server'` in `astro.config.mjs`, all routes are server-rendered by default. No explicit prerender flag is needed. |
-| **`mode: 'advanced'` adapter option is outdated** | The v13 `@astrojs/cloudflare` adapter dropped the explicit `mode` option. The current config is correct as-is. |
+| **`module is not defined` is the primary blocker** | Standalone Worker proved this: page returns **blank** because `superstruct` crashes before any Keystatic code runs. |
+| **`export const prerender = false` is unnecessary** | With `output: 'server'`, all routes are server-rendered by default. |
+| **`mode: 'advanced'` adapter option is outdated** | v13 `@astrojs/cloudflare` dropped the explicit `mode` option. |
 
 ### 7.3 Updated Priority Order
 
-Based on combining our testing data and Gemini's insights, here's the recommended order to try when revisiting:
-
-| Priority | Approach | Section | Estimated Effort |
-|----------|----------|---------|-----------------|
-| **1st** | **D** — Patch `superstruct` at build time via Vite `define` | 6.4 | 1-2 hours |
-| **2nd** | **E** — Custom API route with explicit env var passthrough | 6.5 | 2-3 hours |
-| **3rd** | **A** — Switch to Decap CMS (no SSR needed) | 6.1 | 2-3 hours |
-| **4th** | **C** — Migrate to Vercel/Netlify (full Node.js SSR) | 6.3 | 4-6 hours |
-| **5th** | **B** — Standalone Node.js server + Cloudflare Tunnel | 6.2 | 4-6 hours |
+| Priority | Approach | Section | Effort |
+|----------|----------|---------|--------|
+| **1st** | **D** — Patch `superstruct` at build time | 6.4 | 1-2 hr |
+| **2nd** | **C** — Migrate to Vercel (keep Keystatic, switch hosting) | 6.3 | 30-60 min |
+| **3rd** | **E** — Custom API route with env var passthrough | 6.5 | 2-3 hr |
+| **4th** | **A** — Switch to Decap CMS (keep Cloudflare) | 6.1 | 2-3 hr |
+| **5th** | **B** — Standalone Node.js server + Cloudflare Tunnel | 6.2 | 4-6 hr |
 
 ---
 
 ## 8. Reverting Instructions (if removing Keystatic)
-
-If you decide to remove Keystatic from the project entirely:
 
 ### 8.1 Remove Keystatic Dependencies
 
@@ -380,7 +399,7 @@ rm keystatic.config.ts
 
 ### 8.4 Restore `output` Mode
 
-Change `output: 'server'` to `output: 'static'` in `astro.config.mjs` — this removes the SSR Worker entirely and produces a purely static site.
+Change `output: 'server'` to `output: 'static'` in `astro.config.mjs` — removes the SSR Worker entirely.
 
 ### 8.5 Remove `wrangler.toml`
 
@@ -388,7 +407,6 @@ Delete `wrangler.toml` — no longer needed for static deployment.
 
 ### 8.6 Update Build Command (Cloudflare Pages Dashboard)
 
-Change Build command back to:
 ```
 npm install --legacy-peer-deps && npm run build
 ```
