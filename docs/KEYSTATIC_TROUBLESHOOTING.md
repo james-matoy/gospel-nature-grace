@@ -15,7 +15,8 @@
 4. [Attempts and Results](#4-attempts-and-results)
 5. [What Was Successfully Achieved](#5-what-was-successfully-achieved)
 6. [Future Approaches to Try](#6-future-approaches-to-try)
-7. [Reverting Instructions (if removing Keystatic)](#7-reverting-instructions-if-removing-keystatic)
+7. [External Analysis: Gemini's Evaluation](#7-external-analysis-geminis-evaluation)
+8. [Reverting Instructions (if removing Keystatic)](#8-reverting-instructions-if-removing-keystatic)
 
 ---
 
@@ -322,48 +323,83 @@ export const ALL = async (context) => {
 
 ---
 
-## 7. Reverting Instructions (if removing Keystatic)
+## 7. External Analysis: Gemini's Evaluation
+
+On 2026-06-18, Gemini analyzed the Keystatic-on-Cloudflare issue and provided an independent assessment. Below is a summary of the analysis and a cross-reference to where each finding maps in our own documentation.
+
+### 7.1 What Gemini Got Right
+
+| Finding | Our Section | Status |
+|---------|------------|--------|
+| **Path A (Pages Advanced Mode) is the right direction** — The standalone Worker should be removed; everything runs via `_worker.js` inside Pages. | Section 4, Attempt 4 | ✅ Already concluded |
+| **"Silent failure" on HTTP 500** — The Functions log shows `Ok` status but the app returns 500. The Worker ran without a runtime crash, but Keystatic's internal handler returned an error. | Section 5, Attempt 5 | ✅ Documented |
+| **Environment variables may not reach Keystatic** — Cloudflare Workers inject env vars via `context.locals.runtime.env`, not `process.env`. If `@keystatic/astro`'s auto-generated handler reads `process.env`, Keystatic gets empty credentials and returns 500. | Section 6.5 (Approach E) | ✅ Added |
+| **Custom API route with explicit bindings** — Manual passthrough of Cloudflare runtime bindings into Keystatic may resolve credential-related 500 errors. | Section 6.5 with code snippet | ✅ Added |
+
+### 7.2 What Gemini Missed
+
+| Gap | Explanation |
+|-----|-------------|
+| **`module is not defined` is the primary blocker** | The standalone Worker (Section 4, Attempt 3) proved this: the page returns **blank** (not 500) because `superstruct` crashes before any Keystatic code runs, including env var reading. The env var fix would only help **after** the `superstruct` crash is resolved. |
+| **`export const prerender = false` is unnecessary** | With `output: 'server'` in `astro.config.mjs`, all routes are server-rendered by default. No explicit prerender flag is needed. |
+| **`mode: 'advanced'` adapter option is outdated** | The v13 `@astrojs/cloudflare` adapter dropped the explicit `mode` option. The current config is correct as-is. |
+
+### 7.3 Updated Priority Order
+
+Based on combining our testing data and Gemini's insights, here's the recommended order to try when revisiting:
+
+| Priority | Approach | Section | Estimated Effort |
+|----------|----------|---------|-----------------|
+| **1st** | **D** — Patch `superstruct` at build time via Vite `define` | 6.4 | 1-2 hours |
+| **2nd** | **E** — Custom API route with explicit env var passthrough | 6.5 | 2-3 hours |
+| **3rd** | **A** — Switch to Decap CMS (no SSR needed) | 6.1 | 2-3 hours |
+| **4th** | **C** — Migrate to Vercel/Netlify (full Node.js SSR) | 6.3 | 4-6 hours |
+| **5th** | **B** — Standalone Node.js server + Cloudflare Tunnel | 6.2 | 4-6 hours |
+
+---
+
+## 8. Reverting Instructions (if removing Keystatic)
 
 If you decide to remove Keystatic from the project entirely:
 
-### 7.1 Remove Keystatic Dependencies
+### 8.1 Remove Keystatic Dependencies
 
 ```bash
 npm uninstall @keystatic/astro @keystatic/core --legacy-peer-deps
 ```
 
-### 7.2 Update `astro.config.mjs`
+### 8.2 Update `astro.config.mjs`
 
 Remove the Keystatic integration from the `integrations` array.
 
-### 7.3 Delete Keystatic Config Files
+### 8.3 Delete Keystatic Config Files
 
 ```bash
 rm keystatic.config.ts
 ```
 
-### 7.4 Restore `output` Mode
+### 8.4 Restore `output` Mode
 
 Change `output: 'server'` to `output: 'static'` in `astro.config.mjs` — this removes the SSR Worker entirely and produces a purely static site.
 
-### 7.5 Remove `wrangler.toml`
+### 8.5 Remove `wrangler.toml`
 
 Delete `wrangler.toml` — no longer needed for static deployment.
 
-### 7.6 Update Build Command (Cloudflare Pages Dashboard)
+### 8.6 Update Build Command (Cloudflare Pages Dashboard)
 
 Change Build command back to:
 ```
 npm install --legacy-peer-deps && npm run build
 ```
 
-### 7.7 Clean Up Cloudflare Dashboard
+### 8.7 Clean Up Cloudflare Dashboard
 
 - Delete `SESSION` KV namespace binding from Pages Functions settings
 - Remove `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET`, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` from environment variables
 - Delete the `gospel-nature-grace-keystatic-worker` Worker
 - Delete the `gospel-nature-grace-keystatic-worker-session` KV namespace
 
-### 7.8 Keep Content Files
+### 8.8 Keep Content Files
 
 Content files at `src/content/blog/*.mdoc` are unaffected — they're static content that Astro reads at build time. The blog will still display them without Keystatic.
