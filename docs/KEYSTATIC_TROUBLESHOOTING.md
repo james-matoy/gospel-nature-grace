@@ -278,7 +278,43 @@ define: { 'typeof module': '"object"' }
 
 **Estimated effort:** 1-2 hours to test
 
-### 6.5 Approach E: Use Keystatic's `local` Mode via API
+### 6.5 Approach E: Explicitly Pass Environment Variables from Cloudflare Bindings
+
+**What it is:** The `@keystatic/astro` integration auto-generates API routes, but in Cloudflare Workers, environment variables come from `context.locals.runtime.env` — not `process.env`. Keystatic might be crashing because it can't find the GitHub credentials.
+
+**The fix would involve:**
+1. Create a custom API route at `src/pages/api/keystatic/[...params].ts` that wraps Keystatic's handler
+2. Explicitly pass Cloudflare runtime bindings into Keystatic
+3. Set `export const prerender = false` so the route is server-rendered
+
+```ts
+// src/pages/api/keystatic/[...params].ts
+import { makeApi } from '@keystatic/astro/api';
+import config from '../../../../keystatic.config';
+
+export const prerender = false;
+
+export const ALL = async (context) => {
+  const env = context.locals?.runtime?.env || process.env;
+  const handler = makeApi({
+    config,
+    secret: env.KEYSTATIC_SECRET,
+    github: {
+      clientId: env.KEYSTATIC_GITHUB_CLIENT_ID,
+      clientSecret: env.KEYSTATIC_GITHUB_CLIENT_SECRET,
+    }
+  });
+  return handler(context);
+};
+```
+
+**Why it might work:** `@keystatic/astro`'s auto-generated route handler may rely on `process.env` which doesn't exist in Cloudflare Workers. By manually creating the API route and passing bindings explicitly, Keystatic would receive the credentials it needs.
+
+**Why it might fail:** The `module is not defined` crash in `superstruct` would still happen when the Worker loads `@keystatic/core`. This is a separate issue from environment variables.
+
+**Estimated effort:** 2-3 hours
+
+### 6.6 Approach F: Use Keystatic's `local` Mode via API
 
 **What it is:** Run Keystatic in `local` mode on a separate process / server, and expose only its API endpoints to Cloudflare via a fetch wrapper.
 
