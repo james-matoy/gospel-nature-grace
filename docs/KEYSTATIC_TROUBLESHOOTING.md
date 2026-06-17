@@ -127,6 +127,21 @@ at DevApp.devMatch
 
 The `nodejs_compat` compatibility flag polyfills Node.js APIs like `Buffer`, `process`, `setTimeout` — but it does **not** create a `module` global or implement CommonJS module resolution in the ES module runtime. `superstruct` is accessing `module` as a top-level global, which is fundamentally incompatible with Workerd's module system.
 
+### 3.3 Route Constraint: `*.pages.dev` Cannot Have Custom Routes
+
+Cloudflare's routing documentation ([Routes](https://developers.cloudflare.com/workers/configuration/routing/routes/)) confirms:
+
+> Routes only work for domains whose DNS is managed by Cloudflare (orange-clouded).
+
+A `*.pages.dev` subdomain is Cloudflare's internal domain, not a custom domain you own. Routes **cannot** be configured for it. This means:
+
+- **Separate Worker with route trigger on `*.pages.dev`** → ❌ Not possible
+- **Separate Worker at its own `.workers.dev` URL** → ✅ Works (but Keystatic still crashes on render)
+- **Separate Worker with custom domain** → ✅ Possible, but requires purchasing a domain
+- **Pages Advanced Mode (`_worker.js`)** → ✅ No routes needed, runs natively in Pages (but API still crashes)
+
+**Practical impact:** The routing barrier is real but secondary. Even if routing worked, the `module is not defined` crash would still prevent Keystatic from rendering. A custom domain would fix the routing, but not the Workerd runtime incompatibility.
+
 ---
 
 ## 4. Attempts and Results
