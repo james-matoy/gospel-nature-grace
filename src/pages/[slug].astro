@@ -1,0 +1,55 @@
+---
+export const prerender = true;
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((page) => ({
+    params: { slug: page.id },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<BaseLayout title={page.data.title} description={page.data.title} currentPath={`/${page.id}`}>
+  <!-- Page Hero -->
+  <section class="relative pt-32 pb-16 px-6 text-center">
+    <div class="max-w-[800px] mx-auto">
+      <h1 class="font-display-lg-mobile md:text-display-lg text-primary dark:text-primary-fixed-dim text-balance mb-6">
+        {page.data.title}
+      </h1>
+    </div>
+  </section>
+
+  {page.data.cover && (
+    <div class="max-w-[1000px] mx-auto px-6 mb-8">
+      <div class="aspect-[21/9] overflow-hidden rounded-sm">
+        <img
+          src={page.data.cover}
+          alt={page.data.title}
+          class="w-full h-full object-cover"
+        />
+      </div>
+    </div>
+  )}
+
+  <!-- Page Content -->
+  <article class="max-w-[740px] mx-auto px-6 pb-32">
+    <div class="prose prose-gray max-w-none font-body-lg text-body-lg text-on-surface-variant dark:text-inverse-on-surface leading-relaxed space-y-6
+      prose-headings:font-headline-md prose-headings:text-headline-md prose-headings:text-primary dark:prose-headings:text-primary-fixed-dim prose-headings:leading-tight prose-headings:mt-12 prose-headings:mb-6
+      prose-a:text-primary dark:prose-a:text-primary-fixed-dim prose-a:underline decoration-primary/30 dark:decoration-primary-fixed-dim/30 prose-a:underline-offset-4 prose-a:transition-all hover:prose-a:decoration-primary dark:hover:prose-a:decoration-primary-fixed-dim
+      prose-blockquote:border-l-4 prose-blockquote:border-secondary dark:prose-blockquote:border-secondary-fixed-dim prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:font-headline-md prose-blockquote:text-headline-sm prose-blockquote:text-primary dark:prose-blockquote:text-primary-fixed-dim prose-blockquote:leading-relaxed prose-blockquote:not-italic
+      prose-strong:text-on-surface dark:prose-strong:text-inverse-on-surface prose-strong:font-bold
+      prose-code:text-secondary dark:prose-code:text-secondary-fixed-dim prose-code:bg-surface-container-high dark:prose-code:bg-surface-container-higher prose-code:px-2 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm
+      prose-img:rounded-sm prose-img:w-full
+      prose-hr:border-outline-variant/30 dark:prose-hr:border-outline/30
+      prose-li:marker:text-primary dark:prose-li:marker:text-primary-fixed-dim
+    ">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
