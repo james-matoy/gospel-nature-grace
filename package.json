@@ -9,13 +9,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "blog:publish": "node scripts/blog-publish.mjs",
+    "postinstall": "patch-package"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.7.0",
+    "@astrojs/cloudflare": "^13.5.5",
     "@astrojs/markdoc": "^1.0.5",
     "@astrojs/react": "^5.0.5",
-    "@keystatic/astro": "^5.0.6",
+    "@keystatic/astro": "^5.1.0",
     "@keystatic/core": "^0.5.50",
     "@tailwindcss/vite": "^4.3.0",
     "@types/react": "^19.2.15",
@@ -24,5 +26,8 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.1"
   }
 }

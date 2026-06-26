@@ -5,6 +5,14 @@ export default config({
     kind: 'local',
   },
   collections: {
+    categories: collection({
+      label: 'Categories',
+      slugField: 'name',
+      path: 'src/content/categories/*',
+      schema: {
+        name: fields.slug({ name: { label: 'Category Name' } }),
+      },
+    }),
     blog: collection({
       label: 'Blog',
       path: 'src/content/blog/*',
@@ -22,6 +30,10 @@ export default config({
         date: fields.date({
           label: 'Publication date',
         }),
+        description: fields.text({
+          label: 'Description',
+          multiline: true,
+        }),
         cover: fields.image({
           label: 'Cover image',
           directory: 'public/images/blog',
@@ -35,6 +47,11 @@ export default config({
               publicPath: '/images/blog/',
             },
           },
+        }),
+        category: fields.relationship({
+          label: 'Blog Category',
+          collection: 'categories',
+          validation: { isRequired: true },
         }),
       },
     }),
@@ -65,6 +82,10 @@ export default config({
               publicPath: '/images/pages/',
             },
           },
+        }),
+        category: fields.relationship({
+          label: 'Page Category',
+          collection: 'categories',
         }),
       },
     }),

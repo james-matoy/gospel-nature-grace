@@ -12,6 +12,13 @@ const blog = defineCollection({
   }),
 });
 
+const categories = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: 'src/content/categories' }),
+  schema: z.object({
+    name: z.string(),
+  }),
+});
+
 const pages = defineCollection({
   loader: glob({ pattern: '**/*.mdoc', base: 'src/content/pages' }),
   schema: z.object({
@@ -20,4 +27,4 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { blog, pages };
+export const collections = { blog, pages, categories };
