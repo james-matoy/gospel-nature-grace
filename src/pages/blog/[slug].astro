@@ -23,14 +23,14 @@ const readingTime = Math.ceil((post.data.body?.length || 500) / 1000);
     <div class="max-w-[800px] mx-auto text-center">
       <div class="flex items-center justify-center gap-3 mb-6">
         <span class="h-px w-6 bg-outline-variant dark:bg-outline"></span>
-        <span class="font-label-md text-label-md text-secondary dark:text-secondary-fixed-dim uppercase tracking-[0.15em]">{category}</span>
-        <span class="font-label-md text-label-md text-outline dark:text-outline-variant">&middot;</span>
-        <span class="font-label-md text-label-md text-outline dark:text-outline-variant">{readingTime} min read</span>
+        <span class="font-label-md text-label-md text-secondary dark:text-[#bba286] uppercase tracking-[0.15em]">{category}</span>
+        <span class="font-label-md text-label-md text-outline dark:text-[#a4a8a3]">&middot;</span>
+        <span class="font-label-md text-label-md text-outline dark:text-[#a4a8a3]">{readingTime} min read</span>
       </div>
-      <h1 class="font-display-lg-mobile md:text-display-lg text-primary dark:text-primary-fixed-dim text-balance leading-tight mb-6">
+      <h1 class="font-display-lg-mobile md:text-display-lg text-primary dark:text-[#8cab8e] text-balance leading-tight mb-6">
         {post.data.title}
       </h1>
-      <time datetime={post.data.date.toISOString()} class="font-label-md text-label-md text-outline dark:text-outline-variant italic">
+      <time datetime={post.data.date.toISOString()} class="font-label-md text-label-md text-outline dark:text-[#a4a8a3] italic">
         {post.data.date.toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
@@ -54,26 +54,26 @@ const readingTime = Math.ceil((post.data.body?.length || 500) / 1000);
 
   <!-- Article Content -->
   <article class="max-w-[740px] mx-auto px-6 pb-32">
-    <div class="prose prose-gray max-w-none font-body-lg text-body-lg text-on-surface-variant dark:text-inverse-on-surface leading-relaxed space-y-6
-      prose-headings:font-headline-md prose-headings:text-headline-md prose-headings:text-primary dark:prose-headings:text-primary-fixed-dim prose-headings:leading-tight prose-headings:mt-12 prose-headings:mb-6
-      prose-a:text-primary dark:prose-a:text-primary-fixed-dim prose-a:underline decoration-primary/30 dark:decoration-primary-fixed-dim/30 prose-a:underline-offset-4 prose-a:transition-all hover:prose-a:decoration-primary dark:hover:prose-a:decoration-primary-fixed-dim
-      prose-blockquote:border-l-4 prose-blockquote:border-secondary dark:prose-blockquote:border-secondary-fixed-dim prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:font-headline-md prose-blockquote:text-headline-sm prose-blockquote:text-primary dark:prose-blockquote:text-primary-fixed-dim prose-blockquote:leading-relaxed prose-blockquote:not-italic
+    <div class="prose prose-gray max-w-none font-body-lg text-body-lg text-on-surface-variant dark:text-[#a2a9a2] leading-relaxed space-y-6
+      prose-headings:font-headline-md prose-headings:text-headline-md prose-headings:text-primary dark:prose-headings:text-[#8cab8e] prose-headings:leading-tight prose-headings:mt-12 prose-headings:mb-6
+      prose-a:text-primary dark:prose-a:text-[#8cab8e] prose-a:underline decoration-primary/30 dark:decoration-[#8cab8e]/30 prose-a:underline-offset-4 prose-a:transition-all hover:prose-a:decoration-primary dark:hover:prose-a:decoration-[#8cab8e]
+      prose-blockquote:border-l-4 prose-blockquote:border-secondary dark:prose-blockquote:border-secondary-fixed-dim prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:font-headline-md prose-blockquote:text-headline-sm prose-blockquote:text-primary dark:prose-blockquote:text-[#8cab8e] prose-blockquote:leading-relaxed prose-blockquote:not-italic
       prose-strong:text-on-surface dark:prose-strong:text-inverse-on-surface prose-strong:font-bold
       prose-code:text-secondary dark:prose-code:text-secondary-fixed-dim prose-code:bg-surface-container-high dark:prose-code:bg-surface-container-higher prose-code:px-2 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm
       prose-img:rounded-sm prose-img:w-full
       prose-hr:border-outline-variant/30 dark:prose-hr:border-outline/30
-      prose-li:marker:text-primary dark:prose-li:marker:text-primary-fixed-dim
+      prose-li:marker:text-primary dark:prose-li:marker:text-[#8cab8e]
     ">
       <Content />
     </div>
 
     <!-- Navigation back -->
     <div class="mt-20 pt-8 border-t border-outline-variant/30 dark:border-outline/30 flex justify-between items-center">
-      <a href="/blog" class="inline-flex items-center gap-2 font-label-md text-label-md text-primary dark:text-primary-fixed-dim group">
+      <a href="/blog" class="inline-flex items-center gap-2 font-label-md text-label-md text-primary dark:text-[#92af94] group">
         <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">chevron_left</span>
-        <span class="border-b border-primary/30 dark:border-primary-fixed-dim/30 group-hover:border-primary dark:group-hover:border-primary-fixed-dim transition-all">Back to Reflections</span>
+        <span class="border-b border-primary/30 dark:border-[#92af94]/30 group-hover:border-primary dark:group-hover:border-[#92af94] transition-all">Back to Reflections</span>
       </a>
-      <span class="font-label-md text-label-md text-outline dark:text-outline-variant">{post.data.date.toLocaleDateString('en-US', { year: 'numeric' })}</span>
+      <span class="font-label-md text-label-md text-outline dark:text-[#a4a8a3]">{post.data.date.toLocaleDateString('en-US', { year: 'numeric' })}</span>
     </div>
   </article>
 </BaseLayout>
