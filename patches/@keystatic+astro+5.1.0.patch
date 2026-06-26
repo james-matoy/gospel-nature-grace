@@ -1,8 +1,8 @@
 diff --git a/node_modules/@keystatic/astro/dist/keystatic-astro-api.js b/node_modules/@keystatic/astro/dist/keystatic-astro-api.js
-index 0803312..27c7885 100644
+index 80131fe..e303cec 100644
 --- a/node_modules/@keystatic/astro/dist/keystatic-astro-api.js
 +++ b/node_modules/@keystatic/astro/dist/keystatic-astro-api.js
-@@ -4,7 +4,11 @@ import { parseString } from 'set-cookie-parser';
+@@ -4,7 +4,12 @@ import { parseString } from 'set-cookie-parser';
  function makeHandler(_config) {
    return async function keystaticAPIRoute(context) {
      var _context$locals, _ref, _config$clientId, _ref2, _config$clientSecret, _ref3, _config$secret;
