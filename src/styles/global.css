@@ -190,3 +190,24 @@ table tbody tr:hover {
 :root.dark table tbody tr:hover {
   background-color: #2d2d2d !important;
 }
+
+.prose blockquote {
+  border-left-width: 4px;
+  border-left-color: #715a3e;
+  padding-left: 1.5rem;
+  font-style: italic;
+  font-family: "Libre Caslon Text", serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: #334537;
+}
+:root.dark .prose blockquote {
+  border-left-color: #e0c29f;
+  color: #f0f0f3;
+}
+.prose blockquote p {
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  color: inherit;
+}

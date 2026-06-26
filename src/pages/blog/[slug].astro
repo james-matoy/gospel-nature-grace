@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const category = post.data.category || 'Reflection';
-const readingTime = Math.ceil((post.data.body?.length || 500) / 1000);
+const readingTime = 5;
 ---
 
 <BaseLayout title={post.data.title} description={`${category} &mdash; ${post.data.description || post.data.title}`} currentPath="/blog">
@@ -57,7 +57,7 @@ const readingTime = Math.ceil((post.data.body?.length || 500) / 1000);
     <div class="prose prose-gray max-w-none font-body-lg text-body-lg text-on-surface-variant dark:text-[#a2a9a2] leading-relaxed space-y-6
       prose-headings:font-headline-md prose-headings:text-headline-md prose-headings:text-primary dark:prose-headings:text-[#8cab8e] prose-headings:leading-tight prose-headings:mt-12 prose-headings:mb-6
       prose-a:text-primary dark:prose-a:text-[#8cab8e] prose-a:underline decoration-primary/30 dark:decoration-[#8cab8e]/30 prose-a:underline-offset-4 prose-a:transition-all hover:prose-a:decoration-primary dark:hover:prose-a:decoration-[#8cab8e]
-      prose-blockquote:border-l-4 prose-blockquote:border-secondary dark:prose-blockquote:border-secondary-fixed-dim prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:font-headline-md prose-blockquote:text-headline-sm prose-blockquote:text-primary dark:prose-blockquote:text-[#8cab8e] prose-blockquote:leading-relaxed prose-blockquote:not-italic
+      prose-blockquote:border-l-4 prose-blockquote:border-secondary dark:prose-blockquote:border-secondary-fixed-dim prose-blockquote:pl-6 prose-blockquote:font-headline-md prose-blockquote:text-headline-sm prose-blockquote:text-primary dark:prose-blockquote:text-[#8cab8e] prose-blockquote:leading-relaxed prose-blockquote:italic
       prose-strong:text-on-surface dark:prose-strong:text-inverse-on-surface prose-strong:font-bold
       prose-code:text-secondary dark:prose-code:text-secondary-fixed-dim prose-code:bg-surface-container-high dark:prose-code:bg-surface-container-higher prose-code:px-2 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-sm
       prose-img:rounded-sm prose-img:w-full

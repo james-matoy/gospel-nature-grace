@@ -118,8 +118,14 @@ const categories = (await getCollection('categories')).filter(cat => cat.data.na
     document.addEventListener('DOMContentLoaded', () => {
       const buttons = document.querySelectorAll('.category-btn');
       const posts = document.querySelectorAll('article[data-category]');
+      const searchInput = document.querySelector('input[type="text"]');
 
-      function filterPosts(category) {
+      function getCategory() {
+        const active = document.querySelector('.category-btn.bg-primary');
+        return active ? active.dataset.category : 'all';
+      }
+
+      function filterPosts(category, query) {
         document.querySelectorAll('.category-btn').forEach(btn => {
           btn.classList.remove('bg-primary', 'dark:bg-primary-fixed-dim', 'text-on-primary', 'dark:text-on-primary-fixed');
           btn.classList.add('text-outline', 'dark:text-[#a4a8a3]');
@@ -131,15 +137,23 @@ const categories = (await getCollection('categories')).filter(cat => cat.data.na
           activeBtn.classList.add('bg-primary', 'dark:bg-primary-fixed-dim', 'text-on-primary', 'dark:text-on-primary-fixed');
         }
 
+        const q = (query || '').toLowerCase();
         posts.forEach(post => {
           const postCat = post.dataset.category || 'Reflection';
-          post.style.display = (category === 'all' || postCat === category) ? '' : 'none';
+          const title = (post.querySelector('h2')?.textContent || '').toLowerCase();
+          const matchesCategory = category === 'all' || postCat === category;
+          const matchesQuery = title.includes(q);
+          post.style.display = (matchesCategory && matchesQuery) ? '' : 'none';
         });
       }
 
       buttons.forEach(btn => {
-        btn.addEventListener('click', () => filterPosts(btn.dataset.category));
+        btn.addEventListener('click', () => filterPosts(btn.dataset.category, searchInput?.value));
       });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => filterPosts(getCategory(), searchInput.value));
+      }
 
       filterPosts('all');
     });
