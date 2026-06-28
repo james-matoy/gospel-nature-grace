@@ -6,9 +6,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 const posts = await getCollection('blog');
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 const categories = (await getCollection('categories')).filter(cat => cat.data.name);
+const firstCover = posts[0]?.data?.cover;
 ---
-
 <BaseLayout title="Written Word" description="Reflections on Gospel, Nature, and Grace" currentPath="/blog">
+  {firstCover && <link rel="preload" as="image" href={firstCover} />}
   <!-- Hero / Page Title -->
   <section class="relative pt-32 pb-24 px-6 text-center">
     <div class="max-w-[800px] mx-auto">
@@ -30,7 +31,7 @@ const categories = (await getCollection('categories')).filter(cat => cat.data.na
         <input
           type="text"
           placeholder="Search reflections..."
-          class="w-full pl-10 pr-4 py-2.5 bg-surface-container-high dark:bg-surface-container-highest text-on-surface dark:text-inverse-on-surface border-none outline-none font-body-md text-body-md placeholder:text-outline dark:placeholder:text-[#a4a8a3] transition-colors"
+          class="w-full pl-10 pr-4 py-2.5 bg-surface-container-high dark:bg-surface-container-highest text-on-surface dark:text-[#42425C] border-none outline-none font-body-md text-body-md placeholder:text-outline dark:placeholder:text-[#a4a8a3] transition-colors"
         />
       </div>
       <div class="flex gap-2 flex-shrink-0">
@@ -62,6 +63,8 @@ const categories = (await getCollection('categories')).filter(cat => cat.data.na
                     src={post.data.cover}
                     alt={post.data.title}
                     class="w-full h-full object-cover grayscale hover:grayscale-0 hover:scale-105 transition-all duration-700"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding={index === 0 ? 'auto' : 'async'}
                   />
                 </div>
               ) : (
