@@ -1,0 +1,34 @@
+---
+export interface ContactLink {
+  icon: string;
+  href: string;
+  label: string;
+}
+
+export interface Props {
+  links?: ContactLink[];
+}
+
+const defaultLinks: ContactLink[] = [
+  { icon: 'mail', href: 'mailto:matoy.jamesdavid@gmail.com', label: 'matoy.jamesdavid@gmail.com' },
+  { icon: 'phone', href: 'tel:+639513761502', label: '09513761502' },
+  { icon: 'link', href: 'https://www.linkedin.com/in/james-david-matoy/', label: '/in/james-david-matoy' },
+  { icon: 'code', href: 'https://github.com/james-matoy', label: 'james-matoy' },
+];
+
+const { links = defaultLinks } = Astro.props;
+---
+
+<ul class="space-y-6">
+  {links.map((link) => (
+    <li class="flex items-center gap-4 group">
+      <span class="material-symbols-outlined text-secondary dark:text-secondary-fixed-dim group-hover:text-primary dark:group-hover:text-primary-dim transition-colors duration-300">{link.icon}</span>
+      <a
+        href={link.href}
+        class="font-body-lg text-body-lg text-on-surface dark:text-inverse-on-surface underline decoration-1 underline-offset-4 decoration-outline-variant dark:decoration-outline hover:decoration-primary dark:hover:decoration-primary-dim hover:text-primary dark:hover:text-primary-dim transition-all duration-300"
+      >
+        {link.label}
+      </a>
+    </li>
+  ))}
+</ul>

@@ -1,0 +1,65 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionDivider from '../components/SectionDivider.astro';
+import ImageCard from '../components/ImageCard.astro';
+import BlockQuote from '../components/BlockQuote.astro';
+import ContactLinks from '../components/ContactLinks.astro';
+---
+
+<BaseLayout title="Contact" description="Direct correspondence and professional inquiries" currentPath="/contact">
+  <PageHero
+    title="Contact the Journal"
+    quote="&ldquo;Direct correspondence and professional inquiries.&rdquo;"
+  />
+
+  <main class="max-w-[1000px] mx-auto px-6 pb-32 space-y-32">
+    <!-- Main Contact Section -->
+    <section class="reveal grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+      <!-- Imagery -->
+      <div class="relative">
+        <ImageCard
+          src="https://lh3.googleusercontent.com/aida/AP1WRLvP3KRnjIKnhHdo5bP_MQW8kig-_oC9xU4FyqmrdoUOxOCG_YYY0Z-NVTIvRYdvEktuF9AcT79xdBx_uHG_VGmLqus5_u42WVKYf-u66HDfFDSuk69XuKnzqBvsh-aV_MgdVpqTpq8QABqB2ZXIBf_IpRVEv4OX835xHZGU7ZS0bsrrIJ0ad4aI5ZackXd9WZB0YWL67XgLd_YRRbllOurjoTJ8BD_9LgUy95rrJGk4fpMjOLyVphSHQKGv"
+          alt="Moody botanical photograph of a leaf with dew drops"
+        />
+        <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/10 dark:bg-primary-fixed-dim/10 rounded-full -z-10"></div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="space-y-12">
+        <div class="space-y-4">
+          <SectionDivider label="Correspondence" />
+          <h2 class="font-headline-md text-headline-md text-primary dark:text-primary-dim leading-tight">
+            Reach Out
+          </h2>
+          <p class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant-dim leading-relaxed">
+            I welcome thoughtful correspondence, questions arising from the reflections shared here, and professional inquiries related to writing, data engineering, or collaborative projects.
+          </p>
+        </div>
+
+        <!-- Contact Details -->
+        <div class="space-y-8">
+          <!-- Primary Contact -->
+          <div class="space-y-3 border-b border-outline-variant dark:border-outline pb-6">
+            <span class="font-label-md text-label-md text-outline dark:text-outline-dim uppercase tracking-widest">Director</span>
+            <p class="font-headline-md text-headline-md text-primary dark:text-primary-dim">
+              James David Matoy
+            </p>
+          </div>
+
+          <ContactLinks />
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing Inset Blockquote -->
+    <div class="reveal max-w-3xl mx-auto">
+      <BlockQuote
+        quote="&ldquo;I believe the things God says to one person in the quiet of their own journey might one day speak to someone else in theirs.&rdquo;"
+        attribution="James David Matoy"
+        attributionEmphasis="Gospel, Nature, and Grace"
+      />
+    </div>
+  </main>
+</BaseLayout>

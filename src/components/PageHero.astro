@@ -1,0 +1,21 @@
+---
+export interface Props {
+  title: string;
+  quote?: string;
+}
+
+const { title, quote } = Astro.props;
+---
+
+<section class="relative pt-32 pb-16 px-6 text-center">
+  <div class="max-w-[800px] mx-auto">
+    <h1 class="font-display-lg-mobile md:text-display-lg text-primary dark:text-primary-dim text-balance mb-6">
+      {title}
+    </h1>
+    {quote && (
+      <p class="font-headline-sm italic text-tertiary dark:text-tertiary-dim leading-relaxed opacity-90 max-w-xl mx-auto">
+        {quote}
+      </p>
+    )}
+  </div>
+</section>

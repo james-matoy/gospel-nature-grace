@@ -1,0 +1,20 @@
+---
+export interface Props {
+  quote: string;
+  attribution?: string;
+  attributionEmphasis?: string;
+}
+
+const { quote, attribution, attributionEmphasis } = Astro.props;
+---
+
+<div class="pl-8 border-l-4 border-secondary dark:border-secondary-fixed-dim">
+  <blockquote class="font-headline-md text-headline-sm italic text-primary dark:text-primary-dim leading-relaxed">
+    {quote}
+  </blockquote>
+  {attribution && (
+    <p class="mt-6 font-label-md text-label-md text-outline dark:text-outline-dim uppercase tracking-widest">
+      &mdash; {attribution}{attributionEmphasis && <em>, {attributionEmphasis}</em>}
+    </p>
+  )}
+</div>
