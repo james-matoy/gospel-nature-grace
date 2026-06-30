@@ -1,18 +1,24 @@
 ---
+import { Image } from 'astro:assets';
+
 export interface Props {
   src: string;
   alt: string;
   aspectRatio?: string;
   hoverScale?: boolean;
+  width?: number;
+  height?: number;
 }
 
-const { src, alt, aspectRatio = 'aspect-[4/5]', hoverScale = true } = Astro.props;
+const { src, alt, aspectRatio = 'aspect-[4/5]', hoverScale = true, width = 800, height = 1000 } = Astro.props;
 ---
 
 <div class={`${aspectRatio} overflow-hidden shadow-2xl rounded-sm`}>
-  <img
-    {src}
-    {alt}
+  <Image
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
     class={`w-full h-full object-cover ${hoverScale ? 'hover:scale-105 transition-transform duration-1000' : ''}`}
     loading="lazy"
   />
