@@ -8,9 +8,10 @@ export interface Props {
   hoverScale?: boolean;
   width?: number;
   height?: number;
+  loading?: 'lazy' | 'eager';
 }
 
-const { src, alt, aspectRatio = 'aspect-[4/5]', hoverScale = true, width = 800, height = 1000 } = Astro.props;
+const { src, alt, aspectRatio = 'aspect-[4/5]', hoverScale = true, width = 800, height = 1000, loading = 'lazy' } = Astro.props;
 ---
 
 <div class={`${aspectRatio} overflow-hidden shadow-2xl rounded-sm`}>
@@ -20,6 +21,6 @@ const { src, alt, aspectRatio = 'aspect-[4/5]', hoverScale = true, width = 800, 
     width={width}
     height={height}
     class={`w-full h-full object-cover ${hoverScale ? 'hover:scale-105 transition-transform duration-1000' : ''}`}
-    loading="lazy"
+    {loading}
   />
 </div>
