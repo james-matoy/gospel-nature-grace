@@ -1,6 +1,7 @@
 # Keystatic Local Mode Setup
 
 > Date: 2026-06-25  
+> Last Updated: 2026-06-30  
 > Status: ✅ Working
 
 ---
@@ -42,6 +43,14 @@
 ### 5. Cover Image Not Displaying
 **Problem:** Blog post was missing `cover` field in frontmatter  
 **Fix:** Added `cover: /images/blog/green-heartleaf.png` to `src/content/blog/returning-to-the-page-returning-to-him.mdoc`
+
+### 6. Keystatic Admin UI — "NoMatchingRenderer" Error (2026-06-30)
+**Problem:** Opening `/keystatic` crashed with `NoMatchingRenderer: Unable to render 'Keystatic'. No valid renderer was found for the .js file extension.`  
+**Root Cause:** The `@astrojs/react` integration was missing from the project. Keystatic's admin UI is a React app, and Astro needs the React renderer to serve it.  
+**Fix:** 
+1. Installed `@astrojs/react`, `react`, `react-dom`, `@types/react`, `@types/react-dom`
+2. Added `import react from '@astrojs/react'` and included `react()` in the integrations array in `astro.config.mjs`  
+**Files:** `astro.config.mjs`, `package.json`
 
 ---
 
@@ -111,8 +120,8 @@ Occasional `EPERM` rename errors on `.astro/data-store.json` during rapid saves 
 | File | Purpose |
 |------|---------|
 | `keystatic.config.ts` | Added `description` field, kept `kind: 'local'` |
-| `astro.config.mjs` | Conditional Keystatic/Cloudflare adapter |
-| `package.json` | Added `blog:publish` script, `patch-package` |
+| `astro.config.mjs` | Conditional Keystatic/Cloudflare adapter; added `react()` integration (2026-06-30) |
+| `package.json` | Added `blog:publish` script, `patch-package`; added `@astrojs/react`, `react`, `react-dom` (2026-06-30) |
 | `scripts/blog-publish.mjs` | Branch automation script |
 | `patches/@keystatic+astro+5.1.0.patch` | Astro v6 compatibility |
 | `node_modules/@keystatic/core/dist/keystatic-core-api-generic.worker.js` | Patched to use real local filesystem handler |

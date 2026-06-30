@@ -2,6 +2,7 @@
 export const prerender = true;
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
@@ -16,14 +17,7 @@ const { Content } = await render(page);
 ---
 
 <BaseLayout title={page.data.title} description={page.data.title} currentPath={`/${page.id}`}>
-  <!-- Page Hero -->
-  <section class="relative pt-32 pb-16 px-6 text-center">
-    <div class="max-w-[800px] mx-auto">
-      <h1 class="font-display-lg-mobile md:text-display-lg text-primary dark:text-primary-fixed-dim text-balance mb-6">
-        {page.data.title}
-      </h1>
-    </div>
-  </section>
+  <PageHero title={page.data.title} />
 
   {page.data.cover && (
     <div class="max-w-[1000px] mx-auto px-6 mb-8">

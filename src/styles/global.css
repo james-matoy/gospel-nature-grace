@@ -42,6 +42,12 @@
   --color-primary-fixed: #d3e8d5;
   --color-on-primary-fixed: #0e1f13;
 
+  /* Dark mode semantic aliases (used as dark:text-*) */
+  --color-primary-dim: #8cab8e;
+  --color-on-surface-variant-dim: #a2a9a2;
+  --color-outline-dim: #a4a8a3;
+  --color-tertiary-dim: #bba286;
+
   --font-headline-md: "Libre Caslon Text", serif;
   --font-label-md: "Work Sans", sans-serif;
   --font-body-md: "Libre Caslon Text", serif;
