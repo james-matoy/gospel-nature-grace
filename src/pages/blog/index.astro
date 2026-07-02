@@ -2,6 +2,7 @@
 export const prerender = true;
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
 
 const posts = await getCollection('blog');
 posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -59,10 +60,12 @@ const firstCover = posts[0]?.data?.cover;
             <div class={`${index % 2 === 0 ? 'order-2 md:order-1' : 'order-2 md:order-2'}`}>
               {post.data.cover ? (
                 <div class="aspect-[16/9] overflow-hidden rounded-sm">
-                  <img
+                  <Image
                     src={post.data.cover}
                     alt={post.data.title}
                     class="w-full h-full object-cover grayscale hover:grayscale-0 hover:scale-105 transition-all duration-700"
+                    width={800}
+                    height={450}
                     loading={index === 0 ? 'eager' : 'lazy'}
                     decoding={index === 0 ? 'auto' : 'async'}
                   />

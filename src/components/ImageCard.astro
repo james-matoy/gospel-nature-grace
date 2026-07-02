@@ -14,7 +14,7 @@ export interface Props {
 const { src, alt, aspectRatio = 'aspect-[4/5]', hoverScale = true, width = 800, height = 1000, loading = 'lazy' } = Astro.props;
 ---
 
-<div class={`${aspectRatio} overflow-hidden shadow-2xl rounded-sm`}>
+<div class={`${aspectRatio} overflow-hidden rounded-sm`}>
   <Image
     src={src}
     alt={alt}

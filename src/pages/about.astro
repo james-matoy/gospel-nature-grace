@@ -5,6 +5,7 @@ import PageHero from '../components/PageHero.astro';
 import SectionDivider from '../components/SectionDivider.astro';
 import ImageCard from '../components/ImageCard.astro';
 import BlockQuote from '../components/BlockQuote.astro';
+import { Image } from 'astro:assets';
 ---
 
 <BaseLayout title="About" description="About James David Matoy &mdash; Gospel, Nature, and Grace" currentPath="/about">
@@ -81,10 +82,13 @@ import BlockQuote from '../components/BlockQuote.astro';
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Planting -->
         <div class="group relative overflow-hidden rounded-sm aspect-[4/5] cursor-pointer">
-          <img
+          <Image
             alt="Planting seeds in rich soil"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             src="/images/author/planting.webp"
+            width={800}
+            height={1000}
+            loading="lazy"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6">
@@ -95,10 +99,13 @@ import BlockQuote from '../components/BlockQuote.astro';
 
         <!-- Cultivating -->
         <div class="group relative overflow-hidden rounded-sm aspect-[4/5] cursor-pointer">
-          <img
+          <Image
             alt="Tending a garden"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             src="/images/author/cultivating.webp"
+            width={800}
+            height={1000}
+            loading="lazy"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6">
@@ -109,10 +116,13 @@ import BlockQuote from '../components/BlockQuote.astro';
 
         <!-- Bearing Fruit -->
         <div class="group relative overflow-hidden rounded-sm aspect-[4/5] cursor-pointer">
-          <img
+          <Image
             alt="Harvest of fruits"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             src="/images/author/bearing-fruit.webp"
+            width={800}
+            height={1000}
+            loading="lazy"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6">

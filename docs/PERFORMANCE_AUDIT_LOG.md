@@ -17,6 +17,8 @@
 9. [Image Optimization Pass](#9-image-optimization-pass)
 10. [Git Branch Strategy](#10-git-branch-strategy)
 11. [Summary of All Changes](#11-summary-of-all-changes)
+12. [Session 2: Astro Islands, React Removal & Image Component Migration (June 29–30)](#12-session-2-astro-islands-react-removal--image-component-migration-june-29-30)
+13. [Session 3: Astro DevTools Image Warnings & Dark Theme Polish (July 1–2)](#13-session-3-astro-devtools-image-warnings--dark-theme-polish-july-1-2)
 
 ---
 
@@ -406,11 +408,166 @@ Cloudflare Pages should only build from `main`. Verify in Cloudflare Dashboard �
 ### Git Commits Pushed
 ```bash
 e45f969..eeb33b9  main -> main
-  3235889  chore(seo): add descriptions to all blog posts and fix YAML quoting
-  ce95827  fix(ui): set blog search input text color to #42425C in dark theme
-  4a2351b  perf: defer Material Symbols font, add font preconnect hints, preload hero image
-  eeb33b9  perf: compress all site images, prioritize hero LCP, fix missing blog cover
+   3235889  chore(seo): add descriptions to all blog posts and fix YAML quoting
+   ce95827  fix(ui): set blog search input text color to #42425C in dark theme
+   4a2351b  perf: defer Material Symbols font, add font preconnect hints, preload hero image
+   eeb33b9  perf: compress all site images, prioritize hero LCP, fix missing blog cover
 ```
+
+---
+
+## 12. Session 2: Astro Islands, React Removal & Image Component Migration (June 29–30)
+
+### Context
+Astro DevTools showed "no island detected" — the user asked if islands were necessary for this site.
+
+### Key Findings
+- All 5 components (`PageHero`, `SectionDivider`, `BlockQuote`, `ImageCard`, `ContactLinks`) are static `.astro` files — zero runtime JavaScript
+- All interactivity (dark mode toggle, sticky header, scroll reveal) is handled by inline `<script>` blocks in `BaseLayout.astro`
+- React (`@astrojs/react`, `react`, `react-dom`) was installed but **never used**
+
+### Actions Taken
+
+#### a) Removed React dependencies
+**Files:** `astro.config.mjs`, `package.json`, `package-lock.json`
+
+Removed:
+- `@astrojs/react` integration from `astro.config.mjs`
+- `@astrojs/react`, `react`, `react-dom`, `@types/react`, `@types/react-dom` from `package.json`
+
+**Result:** 32 packages removed from `node_modules`, build still passes.
+
+#### b) Created island architecture decision guide
+**Files:** `docs/ISLAND_ARCHITECTURE_GUIDE.md`
+
+Documents:
+- What an island is (framework component + `client:*` directive)
+- Why this site has no islands (all static `.astro` + vanilla `<script>` blocks)
+- When to use React (interactive forms, search, rich text editors, drag-and-drop)
+- When NOT to use React (simple toggles, click handlers, scroll listeners)
+- Tailwind v4 CSS-based config (no `tailwind.config.mjs` needed)
+
+#### c) Fixed Cloudflare build failure — missing component files
+**Commit:** `6b03457`
+
+The previous commit (`d27024c`) imported `PageHero`, `ImageCard`, `BlockQuote`, `SectionDivider`, and `ContactLinks` but **never committed the files**. Cloudflare build failed with:
+```
+Could not resolve "../components/PageHero.astro" from "src/pages/[slug].astro"
+```
+
+**Fix:** Added all 8 untracked source files to the repository.
+
+#### d) Replaced broken contact page image
+**Files:** `src/pages/contact.astro`
+
+The contact page used a Google-hosted image URL that was broken (showing only alt text). Replaced with local file:
+```
+/images/pages/contact/dark-green-monstera-leaf-dew-drops-black-background.webp
+```
+
+#### e) Migrated `<img>` to Astro `<Image>` component
+**Files:** `src/components/ImageCard.astro`
+
+Replaced native `<img>` with Astro's `<Image>` from `astro:assets` for automatic image optimization (responsive sizes, format conversion, lazy loading). Added `width`/`height` props (default 800×1000 for 4:5 aspect ratio).
+
+#### f) Fixed above-the-fold loading attributes
+Set `loading="eager"` on images visible in the initial viewport:
+- About page author portrait
+- Contact page monstera leaf
+- Home page hero background
+- Home page spotlight
+
+Set `loading="lazy"` on below-fold images:
+- About page grid images (Planting, Cultivating, Bearing Fruit)
+- Home page forest path
+- Blog post covers (except first)
+
+#### g) Removed decorative circle dark theme variant on contact page
+**Files:** `src/pages/contact.astro`
+
+Removed `dark:bg-primary-fixed-dim/10` from the decorative circle behind the contact image — the circle now only shows in light mode.
+
+#### h) Removed `shadow-2xl` from ImageCard
+**Files:** `src/components/ImageCard.astro`
+
+The box shadow created visible grey layers around the black-background contact image in dark mode. Removed `shadow-2xl` from the ImageCard container.
+
+### Git Commits
+```bash
+13a3d05  chore: remove unused React deps and add island architecture guide
+d27024c  refactor: extract shared components, add CONTACT nav, use semantic dark mode tokens
+6b03457  fix: add missing shared components and contact page to resolve Cloudflare build
+058746b  fix: use local contact page image instead of broken Google-hosted URL
+ee7350c  perf: use Astro Image component in ImageCard for optimized image processing
+00e7f8d  perf: use eager loading for above-the-fold images on about and contact pages
+```
+
+---
+
+## 13. Session 3: Astro DevTools Image Warnings & Dark Theme Polish (July 1–2)
+
+### Context
+After the initial image optimization pass, Astro DevTools still showed several warnings about image loading attributes and native `<img>` tags.
+
+### Issues Fixed
+
+#### a) Home page — native `<img>` tags
+**Files:** `src/pages/index.astro`
+
+Replaced 3 native `<img>` tags with Astro's `<Image>` component:
+- Hero background (`hero-bg.webp`, 1920×1080, `loading="eager"`)
+- Spotlight (`spotlight.webp`, 600×800, `loading="eager"`)
+- Forest path (`forest-path.webp`, 600×600, `loading="lazy"`)
+
+#### b) Blog page — native `<img>` tag
+**Files:** `src/pages/blog/index.astro`
+
+Replaced native `<img>` with `<Image>` component for blog post cover images. First post gets `loading="eager"`, rest get `loading="lazy"`.
+
+#### c) About page — native `<img>` tags and loading attribute
+**Files:** `src/pages/about.astro`
+
+- Replaced 3 native `<img>` tags (Planting, Cultivating, Bearing Fruit) with `<Image>` component (800×1000, `loading="lazy"`)
+- Changed author portrait from `loading="lazy"` back to `loading="eager"` (it's above the fold)
+
+#### d) Dark theme text consistency — "The Deep Woods" section
+**Files:** `src/pages/index.astro`
+
+Removed dark theme color overrides from the "The Deep Woods" section so text colors match between light and dark themes:
+
+| Element | Before (dark) | After (dark) |
+|---------|--------------|--------------|
+| "The Deep Woods" label | `dark:text-secondary-fixed-dim` | `text-secondary` (same as light) |
+| "Sanctuary of the Pine" heading | `dark:text-[#8cab8e]` | `text-primary` (same as light) |
+| Description paragraph | `dark:text-[#a2a9a2]` | `text-on-surface-variant` (same as light) |
+
+#### e) Dark theme button hover — "Explore the Forest"
+**Files:** `src/pages/index.astro`
+
+Added `dark:hover:bg-primary-fixed` to the "Explore the Forest" button for a lighter hover state in dark mode:
+- Default: `bg-primary-fixed-dim` (`#b7ccb9`)
+- Hover: `bg-primary-fixed` (`#d3e8d5`)
+
+### Loading Strategy Summary
+
+| Page | Image | Loading | Reason |
+|------|-------|---------|--------|
+| Home | Hero background | `eager` | Above the fold |
+| Home | Spotlight (olive tree) | `eager` | Above the fold |
+| Home | Forest path | `lazy` | Below the fold |
+| Blog | First post cover | `eager` | Above the fold |
+| Blog | Posts 2–6 covers | `lazy` | Below the fold |
+| About | Author portrait | `eager` | Above the fold |
+| About | Planting, Cultivating, Bearing Fruit | `lazy` | Below the fold |
+| Contact | Monstera leaf | `eager` | Above the fold |
+
+### Git Commits
+```bash
+ee7350c  perf: use Astro Image component in ImageCard for optimized image processing
+00e7f8d  perf: use eager loading for above-the-fold images on about and contact pages
+```
+
+(Additional changes from this session are staged but not yet committed.)
 
 ---
 
@@ -427,5 +584,9 @@ e45f969..eeb33b9  main -> main
 | YAML quoting change | None | Purely syntactic, no injection vector |
 | Dev toolbar toggle | None | Dev-only, no production effect |
 | SEO text changes | None | Static text only |
+| React removal | None | Framework was unused; no functionality lost |
+| `<Image>` component migration | None | Astro's built-in component, no external dependencies |
+| Loading attribute changes | None | Standard HTML attributes, no security impact |
+| Dark theme color changes | None | CSS only, no user input |
 
 **Conclusion:** No security vulnerabilities introduced. The site remains safe for production.
