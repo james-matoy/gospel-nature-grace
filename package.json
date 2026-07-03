@@ -11,18 +11,33 @@
     "preview": "astro preview",
     "astro": "astro",
     "blog:publish": "node scripts/blog-publish.mjs",
+    "keystatic:cleanup": "node scripts/cleanup-empty-folders.mjs",
+    "keystatic:delete": "node scripts/keystatic-delete-blog.mjs",
+    "keystatic:watch": "node scripts/keystatic-watch.mjs",
+    "keystatic:clear-cache": "rd /s /q .astro && echo Cache cleared successfully",
+    "keystatic:auto-clean": "node scripts/keystatic-auto-clean.mjs",
+    "keystatic:auto-clean:verbose": "node scripts/keystatic-auto-clean.mjs --verbose",
+    "keystatic:rename-images": "node scripts/rename-blog-images.mjs",
+    "dev:with-cleanup": "start cmd /c \"npm run keystatic:auto-clean\" && npm run dev",
+    "keystatic:auto": "node scripts/keystatic-full-auto.mjs",
+    "keystatic:auto:verbose": "node scripts/keystatic-full-auto.mjs --verbose",
+    "dev:full-auto": "start cmd /c \"npm run keystatic:auto\" && npm run dev",
     "postinstall": "patch-package"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.5.5",
     "@astrojs/markdoc": "^1.0.5",
+    "@astrojs/react": "^6.0.0",
     "@keystatic/astro": "^5.1.0",
     "@keystatic/core": "^0.5.50",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.3.7",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
+    "js-yaml": "^5.2.1",
     "patch-package": "^8.0.1"
   }
 }

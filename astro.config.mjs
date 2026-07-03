@@ -4,10 +4,11 @@ import markdoc from '@astrojs/markdoc';
 import keystatic from '@keystatic/astro';
 import tailwindcss from '@tailwindcss/vite';
 import cloudflare from '@astrojs/cloudflare';
+import react from '@astrojs/react';
 
 // Keystatic only works in local dev (Cloudflare adapter breaks it)
 const isDev = process.env.NODE_ENV !== 'production';
-const integrations = [markdoc()];
+const integrations = [react(), markdoc()];
 if (isDev) {
   integrations.push(keystatic());
 }

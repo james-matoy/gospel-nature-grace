@@ -1,5 +1,5 @@
----
-import '../styles/global.css';
+--- 
+import '../styles/global.css'; 
 
 export interface Props {
   title: string;
@@ -43,10 +43,17 @@ const isAbout = currentPath === '/about';
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     </noscript>
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <!-- Favicon declarations -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <meta name="generator" content={Astro.generator} />
     {description && <meta name="description" content={description} />}
-    {isHome && <link rel="preload" as="image" href="/images/pages/home/hero-bg.webp" fetchpriority="high" />}
+    {isHome && <link rel="preload" as="image" href="/images/home/hero-bg.webp" fetchpriority="high" />}
     <slot name="head" />
   </head>
   <body
