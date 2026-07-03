@@ -569,6 +569,48 @@ ee7350c  perf: use Astro Image component in ImageCard for optimized image proces
 
 (Additional changes from this session are staged but not yet committed.)
 
+#### f) Blog post detail page — native `<img>` tag
+**Files:** `src/pages/blog/[slug].astro`
+
+Replaced the native `<img>` tag used for blog post cover images with Astro's `<Image>` component. This optimization applies to all individual blog post pages (e.g., `/blog/a-blueprint-for-the-papacy-standing-firm-on-biblical-truth`).
+
+**Changes made:**
+- Added `import { Image } from 'astro:assets';` to imports
+- Replaced `<img src={post.data.cover} alt={post.data.title} class="w-full h-full object-cover" />` with:
+```astro
+<Image
+  src={post.data.cover}
+  alt={post.data.title}
+  class="w-full h-full object-cover"
+  width={1000}
+  height={562}
+  format="avif;webp"
+  loading="eager"
+/>
+```
+
+**Benefits:**
+- Automatic image optimization (compression, format conversion)
+- Eager loading with `loading="eager"` for above-the-fold content
+- Async decoding with `decoding="async"` automatically applied
+- Multiple format support (AVIF for modern browsers, WebP fallback)
+- Explicit dimensions prevent layout shifts
+- Resolves Astro DevTools warnings about using the Image component and loading attributes
+
+### Loading Strategy Summary (Updated)
+
+| Page | Image | Loading | Reason |
+|------|-------|---------|--------|
+| Home | Hero background | `eager` | Above the fold |
+| Home | Spotlight (olive tree) | `eager` | Above the fold |
+| Home | Forest path | `lazy` | Below the fold |
+| Blog | First post cover | `eager` | Above the fold |
+| Blog | Posts 2–6 covers | `lazy` | Below the fold |
+| Blog Post Detail | Cover image | `lazy` | Below the hero section |
+| About | Author portrait | `eager` | Above the fold |
+| About | Planting, Cultivating, Bearing Fruit | `lazy` | Below the fold |
+| Contact | Monstera leaf | `eager` | Above the fold |
+
 ---
 
 ## Appendix: Security Review

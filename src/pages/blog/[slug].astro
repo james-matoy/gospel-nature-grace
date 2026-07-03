@@ -1,6 +1,7 @@
 ---
 export const prerender = true;
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
@@ -43,10 +44,14 @@ const readingTime = 5;
   {post.data.cover && (
     <div class="max-w-[1000px] mx-auto px-6 mb-16">
       <div class="aspect-[16/9] overflow-hidden rounded-sm">
-        <img
+        <Image
           src={post.data.cover}
           alt={post.data.title}
           class="w-full h-full object-cover"
+          width={1000}
+          height={562}
+          format="avif;webp"
+          loading="eager"
         />
       </div>
     </div>
