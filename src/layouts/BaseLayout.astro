@@ -23,26 +23,19 @@ const isAbout = currentPath === '/about';
       } catch (e) {}
     </script>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>{title} | Gospel, Nature, and Grace</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@400;500;700&display=swap"
-      rel="stylesheet"
-      media="print" onload="this.media='all'"
-    />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-    </noscript>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-      media="print" onload="this.media='all'"
-    />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-    </noscript>
+    <!-- Fonts are always fetched in CORS mode, so font preloads REQUIRE the
+         crossorigin attribute to match — without it the preload is ignored and
+         the font downloads twice on slow (mobile) connections. The icon font is
+         preloaded too: it renders the header, footer, and mobile bottom-nav
+         glyphs and would otherwise only be discovered after the CSS is parsed,
+         leaving the raw ligature text (e.g. "dark_mode") visible on throttled
+         mobile connections. -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="/fonts/libre-caslon-text-normal-400.woff2" fetchpriority="high" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="/fonts/material-symbols-subset.woff2" fetchpriority="high" />
     <!-- Favicon declarations -->
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
@@ -59,15 +52,12 @@ const isAbout = currentPath === '/about';
   <body
     class="text-on-background dark:text-inverse-on-surface selection:bg-primary-container selection:text-on-primary-container transition-colors duration-300"
   >
+        <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 bg-surface dark:bg-on-background px-3 py-2 rounded shadow">Skip to content</a>
     <!-- Top Navigation -->
     <header
       class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 md:px-12 bg-surface/80 dark:bg-on-background/80 backdrop-blur-md transition-colors"
     >
       <div class="flex items-center gap-6">
-        <span
-          class="material-symbols-outlined text-primary dark:text-inverse-primary cursor-pointer md:hidden"
-          id="mobile-menu-btn"
-        >menu</span>
         <a
           class="font-headline-md text-primary dark:text-inverse-primary tracking-tight text-[24px] md:text-[32px]"
           href="/"
@@ -101,7 +91,7 @@ const isAbout = currentPath === '/about';
           class="p-2 text-outline dark:text-outline-dim hover:text-primary dark:hover:text-primary-fixed-dim transition-colors"
           id="theme-toggle"
         >
-          <span class="material-symbols-outlined">dark_mode</span>
+                    <span aria-hidden="true" class="material-symbols-outlined" data-icon="dark_mode"></span>
         </button>
       </div>
     </header>
@@ -129,22 +119,18 @@ const isAbout = currentPath === '/about';
             class="font-body-md text-body-md text-outline dark:text-outline-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-colors"
           >Archives</a>
           <a
-            href="#"
-            class="font-body-md text-body-md text-outline dark:text-outline-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-colors"
-          >Terms of Grace</a>
-          <a
             href="/contact"
             class="font-body-md text-body-md text-outline dark:text-outline-dim hover:text-primary dark:hover:text-primary-fixed-dim underline transition-colors"
           >Contact</a>
         </div>
         <div class="pt-8 space-y-2">
           <p
-            class="font-body-md text-body-md text-outline dark:text-outline-dim opacity-70"
+            class="font-body-md text-body-md text-outline dark:text-outline-dim"
           >© 2026 Gospel, Nature, and Grace. Soli Deo Gloria.</p>
-          <div class="flex justify-center gap-4 text-outline-variant dark:text-outline">
-            <span class="material-symbols-outlined text-sm">nature</span>
-            <span class="material-symbols-outlined text-sm">auto_stories</span>
-            <span class="material-symbols-outlined text-sm">water_drop</span>
+                    <div class="flex justify-center gap-4 text-outline dark:text-inverse-on-surface">
+            <span aria-hidden="true" class="material-symbols-outlined text-sm">nature</span>
+            <span aria-hidden="true" class="material-symbols-outlined text-sm">auto_stories</span>
+            <span aria-hidden="true" class="material-symbols-outlined text-sm">water_drop</span>
           </div>
         </div>
       </div>
@@ -159,7 +145,7 @@ const isAbout = currentPath === '/about';
         class="flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform"
         class:list={{ 'text-primary dark:text-primary-fixed-dim font-bold': isHome, 'text-outline dark:text-outline-dim': !isHome }}
       >
-        <span class="material-symbols-outlined" class:list={{ 'font-variation-settings': "'FILL' 1" }}>home_max</span>
+        <span aria-hidden="true" class="material-symbols-outlined icon-filled">home</span>
         <span class="text-[10px] uppercase font-label-md tracking-tighter">Home</span>
       </a>
       <a
@@ -167,7 +153,7 @@ const isAbout = currentPath === '/about';
         class="flex flex-col items-center justify-center gap-1 active:scale-95 transition-all"
         class:list={{ 'text-primary dark:text-primary-fixed-dim font-bold': isBlog, 'text-outline dark:text-outline-dim hover:text-primary dark:hover:text-primary-fixed-dim': !isBlog }}
       >
-        <span class="material-symbols-outlined">auto_stories</span>
+        <span aria-hidden="true" class="material-symbols-outlined">auto_stories</span>
         <span class="text-[10px] uppercase font-label-md tracking-tighter">Reflections</span>
       </a>
       <a
@@ -175,7 +161,7 @@ const isAbout = currentPath === '/about';
         class="flex flex-col items-center justify-center gap-1 active:scale-95 transition-all"
         class:list={{ 'text-primary dark:text-primary-fixed-dim font-bold': isAbout, 'text-outline dark:text-outline-dim hover:text-primary dark:hover:text-primary-fixed-dim': !isAbout }}
       >
-        <span class="material-symbols-outlined">nature_people</span>
+        <span aria-hidden="true" class="material-symbols-outlined">nature_people</span>
         <span class="text-[10px] uppercase font-label-md tracking-tighter">About</span>
       </a>
       <a
@@ -183,7 +169,7 @@ const isAbout = currentPath === '/about';
         class="flex flex-col items-center justify-center gap-1 active:scale-95 transition-all"
         class:list={{ 'text-primary dark:text-primary-fixed-dim font-bold': currentPath === '/contact', 'text-outline dark:text-outline-dim hover:text-primary dark:hover:text-primary-fixed-dim': currentPath !== '/contact' }}
       >
-        <span class="material-symbols-outlined">mail</span>
+        <span aria-hidden="true" class="material-symbols-outlined">mail</span>
         <span class="text-[10px] uppercase font-label-md tracking-tighter">Contact</span>
       </a>
     </nav>
@@ -197,7 +183,7 @@ const isAbout = currentPath === '/about';
           html.classList.toggle('dark');
           const isDark = html.classList.contains('dark');
           const icon = themeToggle.querySelector('span');
-          if (icon) icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+                    if (icon) icon.dataset.icon = isDark ? 'light_mode' : 'dark_mode';
           try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
         });
       }
@@ -227,5 +213,5 @@ const isAbout = currentPath === '/about';
       );
       document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
     </script>
-  </body>
+</body>
 </html>

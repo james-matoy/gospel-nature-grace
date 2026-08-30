@@ -22,7 +22,7 @@ const { links = defaultLinks } = Astro.props;
 <ul class="space-y-6">
   {links.map((link) => (
     <li class="flex items-center gap-4 group">
-      <span class="material-symbols-outlined text-secondary dark:text-secondary-fixed-dim group-hover:text-primary dark:group-hover:text-primary-dim transition-colors duration-300">{link.icon}</span>
+      <span aria-hidden="true" class="material-symbols-outlined text-secondary dark:text-secondary-fixed-dim group-hover:text-primary dark:group-hover:text-primary-dim transition-colors duration-300">{link.icon}</span>
       <a
         href={link.href}
         class="font-body-lg text-body-lg text-on-surface dark:text-inverse-on-surface underline decoration-1 underline-offset-4 decoration-outline-variant dark:decoration-outline hover:decoration-primary dark:hover:decoration-primary-dim hover:text-primary dark:hover:text-primary-dim transition-all duration-300"

@@ -28,9 +28,10 @@ const firstCover = posts[0]?.data?.cover;
   <div class="sticky top-16 z-40 bg-surface/90 dark:bg-on-background/90 backdrop-blur-md border-b border-outline-variant/40 dark:border-outline/40 transition-colors">
     <div class="max-w-[1000px] mx-auto px-6 py-4 flex items-center gap-4 overflow-x-auto no-scrollbar">
       <div class="relative flex-1 min-w-[200px]">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline dark:text-[#a4a8a3] text-sm">search</span>
+        <span aria-hidden="true" class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline dark:text-[#a4a8a3] text-sm">search</span>
         <input
           type="text"
+          aria-label="Search reflections"
           placeholder="Search reflections..."
           class="w-full pl-10 pr-4 py-2.5 bg-surface-container-high dark:bg-surface-container-highest text-on-surface dark:text-[#42425C] border-none outline-none font-body-md text-body-md placeholder:text-outline dark:placeholder:text-[#a4a8a3] transition-colors"
         />
@@ -110,7 +111,7 @@ const firstCover = posts[0]?.data?.cover;
                     class="inline-flex items-center gap-2 font-label-md text-label-md text-primary dark:text-[#8cab8e] group"
                   >
                     <span class="border-b border-primary/30 dark:border-[#8cab8e]/30 group-hover:border-primary dark:group-hover:border-[#8cab8e] transition-all">Read Reflection</span>
-                  <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  <span aria-hidden="true" class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </a>
               </div>
             </div>

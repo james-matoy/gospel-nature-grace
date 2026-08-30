@@ -75,7 +75,7 @@ const readingTime = 5;
     <!-- Navigation back -->
     <div class="mt-20 pt-8 border-t border-outline-variant/30 dark:border-outline/30 flex justify-between items-center">
       <a href="/blog" class="inline-flex items-center gap-2 font-label-md text-label-md text-primary dark:text-[#92af94] group">
-        <span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">chevron_left</span>
+        <span aria-hidden="true" class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">chevron_left</span>
         <span class="border-b border-primary/30 dark:border-[#92af94]/30 group-hover:border-primary dark:group-hover:border-[#92af94] transition-all">Back to Reflections</span>
       </a>
       <span class="font-label-md text-label-md text-outline dark:text-[#a4a8a3]">{post.data.date.toLocaleDateString('en-US', { year: 'numeric' })}</span>

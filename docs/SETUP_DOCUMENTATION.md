@@ -508,6 +508,21 @@ Get-Process -Name "node" | Stop-Process -Force
 npm run dev
 ```
 
+### 10.7 Icons Rendering as Raw Text (e.g. "search", "home")
+
+**Symptom:** A Material Symbols icon name shows as plain text instead of a glyph.
+
+**Cause:** The icon name is not in the font subset. All icons use the single ligature font `public/fonts/material-symbols-subset.woff2`; if an icon name added to a template was not included when the subset was generated, it renders as its literal name (e.g. "search", "home") instead of a glyph.
+
+**Fix:** Regenerate the subset with every icon name used in `src/`:
+1. Collect the icon names (any `<span class="material-symbols-outlined">…</span>` text, `data-icon` values, or `icon:` config keys).
+2. Build the Google Fonts css2 URL with `icon_names=` listing all names, e.g.:
+   `https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=arrow_forward,home,search,…&display=block`
+3. Download the `.woff2` referenced in the API response over `public/fonts/material-symbols-subset.woff2`.
+4. Hard refresh (`Ctrl+Shift+R`) to bypass the cached font.
+
+Full root-cause history: `docs/PERFORMANCE_AUDIT_LOG.md` §§ 12.1–12.3 and `README.md` troubleshooting item 6.
+
 ---
 
 ## 11. Quick Reference
@@ -533,6 +548,7 @@ npm run dev
 │   └── styles/
 │       └── global.css        # Tailwind CSS import
 └── public/
+    ├── fonts/                # Self-hosted fonts (WOFF2)
     └── images/
         └── blog/             # Images uploaded via Keystatic
             └── nice/
@@ -600,4 +616,4 @@ npm run dev
 
 ---
 
-*Last updated: May 2026*
+*Last updated: Aug 2026*

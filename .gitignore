@@ -25,4 +25,7 @@ pnpm-debug.log*
 
 # claude settings with secrets
 .claude/
-.wrangler/  
+.wrangler/
+
+# local launcher files (Windows-specific)
+.local-launcher/

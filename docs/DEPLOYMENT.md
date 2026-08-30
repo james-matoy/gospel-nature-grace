@@ -72,6 +72,7 @@ dist/client/
 │   ├── client.DC-NXwka.js
 │   └── keystatic-page.CTJL5ovl.js
 ├── images/                     # Public images
+├── fonts/                      # Self-hosted fonts (WOFF2)
 ├── _headers                    # Cache-Control headers for assets
 └── favicon.ico / favicon.svg
 ```

@@ -6,11 +6,12 @@ import { Image } from 'astro:assets';
 
 <BaseLayout title="Home" description="Sanctuary for the Written Word" currentPath="/">
   <!-- Hero Section -->
-  <section class="relative flex items-center justify-center pt-20 min-h-[75vh]">
+      <section class="relative flex items-center justify-center pt-20 min-h-[75vh]" aria-label="Introduction">
     <div class="absolute inset-0 z-0">
       <Image
         alt="Mountain summit landscape at dawn"
         class="w-full h-full object-cover"
+        fetchpriority="high"
         src="/images/home/hero-bg.webp"
         width={1920}
         height={1080}
@@ -26,18 +27,17 @@ import { Image } from 'astro:assets';
         &ldquo;Finding the divine in the deep textures of the world, where silence speaks and every leaf whispers of a Creator's hand.&rdquo;
       </p>
       <div class="mt-16">
-        <a href="/blog">
-          <button
-            class="font-label-md text-label-md text-primary dark:text-[#8cab8e] tracking-widest uppercase border-b-2 border-primary/20 dark:border-[#8cab8e]/20 pb-2 hover:border-primary dark:hover:border-[#8cab8e] transition-all"
-          >
-            Enter the Sanctuary
-          </button>
+        <a
+          href="/blog"
+          class="inline-block font-label-md text-label-md text-primary dark:text-[#8cab8e] tracking-widest uppercase border-b-2 border-primary/20 dark:border-[#8cab8e]/20 pb-2 hover:border-primary dark:hover:border-[#8cab8e] transition-all"
+        >
+          Enter the Sanctuary
         </a>
       </div>
     </div>
   </section>
 
-  <main class="max-w-[1000px] mx-auto px-6 py-section-gap space-y-40">
+    <main id="main" class="max-w-[1000px] mx-auto px-6 py-section-gap space-y-40">
     <!-- Pinned Spotlight -->
     <article class="reveal grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
       <div class="order-2 md:order-1">
@@ -48,7 +48,7 @@ import { Image } from 'astro:assets';
             src="/images/home/spotlight.webp"
             width={600}
             height={800}
-            loading="eager"
+                                    loading="lazy"
           />
         </div>
       </div>
@@ -72,7 +72,7 @@ import { Image } from 'astro:assets';
             href="/blog"
           >
             <span class="border-b border-primary/30 dark:border-[#8cab8e]/30 group-hover:border-primary dark:group-hover:border-[#8cab8e] transition-all">Read the full reflection</span>
-            <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            <span aria-hidden="true" class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </a>
         </div>
       </div>
@@ -88,10 +88,11 @@ import { Image } from 'astro:assets';
             Where sunlight filters through a cathedral of canopy, we learn the quiet art of listening. These forests are not merely timber and moss, but living testaments to the steady, unhurried pace of Divine work.
           </p>
           <div class="pt-4">
-            <a href="/blog">
-              <button class="font-label-md text-label-md px-8 py-3 bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed hover:bg-primary-container dark:hover:bg-primary-fixed transition-colors">
-                Explore the Forest
-              </button>
+            <a
+              href="/blog"
+              class="inline-block font-label-md text-label-md px-8 py-3 bg-primary dark:bg-primary-fixed-dim text-on-primary dark:text-on-primary-fixed hover:bg-primary-container dark:hover:bg-primary-fixed transition-colors"
+            >
+              Explore the Forest
             </a>
           </div>
         </div>

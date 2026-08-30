@@ -632,3 +632,106 @@ Replaced the native `<img>` tag used for blog post cover images with Astro's `<I
 | Dark theme color changes | None | CSS only, no user input |
 
 **Conclusion:** No security vulnerabilities introduced. The site remains safe for production.
+
+---
+
+## 12. Issue: Icons Rendering as Raw Text on Mobile (Lighthouse mobile 95 vs desktop 100)
+
+**Date:** 2026-08-30
+
+### Symptom
+
+On mobile (throttled Lighthouse runs and slow real connections), icons rendered as
+their literal ligature text — `dark_mode`, `home_max`, `auto_stories`, `mail` —
+instead of glyphs. Desktop was unaffected, and the mobile performance score
+trailed desktop (95 vs 100).
+
+### Root Cause
+
+Icons are a self-hosted **ligature-based icon font** (`Material Symbols Outlined`,
+`/fonts/material-symbols-subset.woff2`). The icon name is real text content that
+the font converts into a glyph. Three compounding problems:
+
+1. **`font-display: swap` on the icon font.** Swap shows the fallback text
+   *immediately*, so the raw icon names printed until the font arrived. With
+   mobile throttling this window is seconds; desktop fetches in milliseconds.
+   (Google's own Material Symbols stylesheet uses `font-display: block`.)
+2. **The icon font was not preloaded.** It was discovered only after the CSS was
+   parsed, extending the raw-text window and adding a layout shift when the text
+   collapsed into glyphs (visible in the mobile bottom nav).
+3. **The body-font preload lacked `crossorigin`.** Fonts are always fetched in
+   CORS mode; a preload without `crossorigin` never matches, so the font was
+   downloaded twice on every page — wasted bandwidth and delayed LCP on mobile.
+
+### Fixes Applied
+
+**Files:** `src/styles/global.css`, `src/layouts/BaseLayout.astro`, `src/pages/index.astro`
+
+- Icon font `@font-face` switched to `font-display: block` — raw ligature text is
+  never visible during the font-load window (safe because the font is now preloaded).
+- Added `<link rel="preload" as="font" crossorigin fetchpriority="high">` for
+  `/fonts/material-symbols-subset.woff2` in `BaseLayout.astro`.
+- Added `crossorigin` to the existing `libre-caslon-text-normal-400.woff2`
+  preload, eliminating the duplicate download.
+- Added `fetchpriority="high"` to the homepage hero `<Image>`.
+- Fixed a latent bug: the mobile bottom-nav home icon used an invalid
+  `class:list={{ 'font-variation-settings': "'FILL' 1" }}` (emitted a class name
+  that matched no CSS). Replaced with a dedicated unlayered `.icon-filled` rule
+  (FILL 1) so the active tab renders filled as designed.
+
+### Result
+
+Icons no longer display raw ligature text on any connection speed; icon font
+arrives with the critical render path; body font no longer double-downloads.
+Re-verify with a throttled mobile Lighthouse run after deploy.
+
+### 12.1 Follow-up (same day): the actual root cause — two deeper bugs
+
+After rebuild + preview the icons still rendered as text (`nature`,
+`auto_stories`, `water_drop`, `arrow_forward`). Two further root causes found:
+
+1. **`.material-symbols-outlined` never applied the icon font.** When the fonts
+   were self-hosted, the `@font-face` rule and the `font-variation-settings`
+   line were copied but Google's class rule — `font-family: 'Material Symbols
+   Outlined'` and friends — was not. Only the theme toggle rendered a glyph
+   (its `[data-icon]::before` rule sets `font-family` explicitly). Every other
+   icon span rendered its ligature name as ordinary body text, on all devices.
+   Fixed by adding Google's canonical class rule (minus `font-size: 24px`, so
+   existing Tailwind size classes like `text-sm` stay in control).
+
+2. **The subset font contained none of the site's icon ligatures.** Verified by
+   parsing the woff2 with fontkit (temp workspace, `GSUB` LigatureSubst
+   extraction + reverse-cmap string reconstruction): the old
+   `material-symbols-subset.woff2` (63KB, 776 glyphs) held 43 ligatures for
+   unrelated icons (`airline_seat_legroom_normal`, `nest_thermostat_sensor`,
+   …) — zero coverage for the 12 names in use, so even with the class fixed,
+   ligature text could never become a glyph. Regenerated the subset via the
+   Google Fonts css2 API `icon_names` parameter
+   (`family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=…&display=block`,
+   Chrome UA) — the new font is 3.8KB, ligatures verified for all 12 names
+   (`arrow_forward`, `auto_stories`, `code`, `dark_mode`, `home_max`,
+   `light_mode`, `link`, `mail`, `nature`, `nature_people`, `phone`,
+   `water_drop`), FILL axis 0..1 retained for `.icon-filled`. Same filename, so
+   `@font-face`, preloads and CSS are untouched. Old font kept as
+   `material-symbols-subset.woff2.orig`. When adding a new icon name to the
+   site, the subset must be regenerated the same way.
+
+### 12.2 Follow-up: `search` (and `chevron_left`) missing from the subset
+
+The blog index search bar rendered the word "search" instead of a
+magnifying-glass glyph — the subset regenerated in 12.1 covered only 12 of the
+site's icon names; `search` (blog search bar) and `chevron_left` were missed.
+Icon extraction is now done with a sweep across all of `src/` (span text,
+`data-icon` attributes, JS `dataset.icon` assignments, `icon:` config keys) —
+14 names total. Subset regenerated with the same API call and re-verified
+(3.9KB, all 14 ligatures present, FILL 0..1 retained). Rule of thumb: any new
+`material-symbols-outlined` icon name added to a template must be added to the
+`icon_names` list and the subset regenerated, or it will render as raw text.
+
+### 12.3 Home icon swapped to the standard glyph
+
+The mobile bottom-nav home icon changed from `home_max` (wide/side house shape,
+easy to misread at 24px) to `home` (the classic house glyph, universally
+recognized in bottom navs). Subset regenerated and re-verified — 3,868 bytes,
+14 names, FILL 0..1 retained. The `icon-filled` (FILL 1) active-tab styling is
+unchanged.

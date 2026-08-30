@@ -15,8 +15,8 @@ Gospel, Nature, and Grace is a personal blog focused on spiritual reflections, b
 | **CMS** | Keystatic | Latest | Markdown-based content management |
 | **Deployment** | Cloudflare Pages | - | Hosting and CDN |
 | **Images** | Sharp | - | Image optimization |
-| **Icons** | Material Symbols | - | Iconography |
-| **Fonts** | Google Fonts | - | Typography |
+| **Icons** | Material Symbols (subset) | - | Iconography (self-hosted WOFF2 ligature font) |
+| **Fonts** | Google Fonts (self-hosted) | - | Typography (local WOFF2, no CDN) |
 
 ## 🚀 Setup
 
@@ -53,7 +53,7 @@ cp .env.example .env
 
 ### Performance Optimizations
 - **Image Optimization**: All images use Astro's `<Image>` component with AVIF/WebP formats
-- **Font Loading**: Deferred Google Fonts with `media="print"` + `onload` pattern
+- **Font Loading**: Self-hosted WOFF2 fonts preloaded with `crossorigin` + `fetchpriority="high"` (no Google CDN request chain; icon font uses `font-display: block` to prevent raw-ligature flashes)
 - **Resource Prioritization**: `fetchpriority="high"` for LCP elements
 - **Lazy Loading**: Below-the-fold images load as needed
 - **Compression**: WebP images with quality optimization (55-70 range)
@@ -66,6 +66,7 @@ cp .env.example .env
 │   ├── images/              # Optimized images (WebP format)
 │   │   ├── blog/            # Blog post cover images
 │   │   └── pages/           # Page-specific images
+│   ├── fonts/               # Self-hosted fonts (Libre Caslon, Work Sans, Material Symbols subset)
 │   └── favicon.png          # Site favicon
 │
 ├── src/
@@ -240,17 +241,26 @@ sharp('cover.png')
 #### 5. **Font Loading Issues**
 **Issue**: FOIT (Flash of Invisible Text)
 
-**Solution**: Use the deferred font loading pattern:
+**Solution**: Fonts are self-hosted in `/fonts/*.woff2` and preloaded in `BaseLayout.astro`:
 ```astro
-<link
-  href="https://fonts.googleapis.com/..."
-  rel="stylesheet"
-  media="print"
-  onload="this.media='all'"
-/>
-<noscript>
-  <link href="..." rel="stylesheet" />
-</noscript>
+<link rel="preload" as="font" type="font/woff2" crossorigin
+  href="/fonts/libre-caslon-text-normal-400.woff2" fetchpriority="high" />
+```
+Keep `crossorigin` on every font preload — fonts are always fetched in CORS
+mode, and without it the preload is ignored and the font downloads twice. The
+Material Symbols icon font uses `font-display: block` in `@font-face` so raw
+icon names never flash before the glyphs load.
+
+#### 6. **Icons Rendering as Raw Text (e.g. "search", "home")**
+**Issue**: A Material Symbols icon name (ligature) displays as plain text instead of a glyph.
+
+**Solution**: The name is missing from the icon-font subset. All icons render from the single ligature font at `public/fonts/material-symbols-subset.woff2`, so every icon name used in `src/` must exist as a ligature in it. Regenerate the subset for the full list of icons in use:
+```bash
+# 1. Collect every icon name used in src/ (span text, data-icon values, icon: config keys)
+# 2. Request a subset for exactly those names, e.g.:
+#    https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=arrow_forward,home,search,...&display=block
+# 3. Download the .woff2 URL from the API response to public/fonts/material-symbols-subset.woff2
+# 4. Verify glyphs render (hard refresh Ctrl+Shift+R to bypass the cached font)
 ```
 
 ### Performance Troubleshooting

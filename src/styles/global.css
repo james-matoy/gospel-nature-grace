@@ -24,7 +24,7 @@
   --color-on-surface: #1a1c1e;
   --color-surface-variant: #e2e2e5;
   --color-on-surface-variant: #434843;
-  --color-outline: #737872;
+  --color-outline: #656a64;
   --color-outline-variant: #c3c8c1;
   --color-inverse-surface: #2f3133;
   --color-inverse-on-surface: #f0f0f3;
@@ -48,13 +48,13 @@
   --color-outline-dim: #a4a8a3;
   --color-tertiary-dim: #bba286;
 
-  --font-headline-md: "Libre Caslon Text", serif;
-  --font-label-md: "Work Sans", sans-serif;
-  --font-body-md: "Libre Caslon Text", serif;
-  --font-body-lg: "Libre Caslon Text", serif;
-  --font-display-lg-mobile: "Libre Caslon Text", serif;
-  --font-display-lg: "Libre Caslon Text", serif;
-  --font-headline-sm: "Libre Caslon Text", serif;
+  --font-headline-md: "Libre Caslon Text", "Libre Caslon Fallback", serif;
+  --font-label-md: "Work Sans", "Work Sans Fallback", sans-serif;
+  --font-body-md: "Libre Caslon Text", "Libre Caslon Fallback", serif;
+  --font-body-lg: "Libre Caslon Text", "Libre Caslon Fallback", serif;
+  --font-display-lg-mobile: "Libre Caslon Text", "Libre Caslon Fallback", serif;
+  --font-display-lg: "Libre Caslon Text", "Libre Caslon Fallback", serif;
+  --font-headline-sm: "Libre Caslon Text", "Libre Caslon Fallback", serif;
 
   --text-headline-md: 32px;
   --text-headline-md--line-height: 40px;
@@ -98,6 +98,82 @@
   --radius-full: 0.75rem;
 }
 
+/* Metric-matched fallbacks: these local faces render instantly and closely
+   approximate the web-font metrics, minimising the visible font-swap ("pop")
+   on first load. Tune size-adjust after measuring swap shift in DevTools. */
+@font-face {
+  font-family: 'Libre Caslon Fallback';
+  src: local('Georgia');
+  size-adjust: 104%;
+}
+
+@font-face {
+  font-family: 'Work Sans Fallback';
+  src: local('Arial');
+  size-adjust: 102%;
+}
+
+/* Self-hosted Google Fonts (latin) — removes the cross-origin CSS + font-fetch
+   chain that delayed the LCP hero heading. font-display: swap keeps the
+   metric-matched fallback (above) visible instantly, then swaps to these
+   same-origin WOFF2s which arrive via <link rel="preload" as="font">. */
+@font-face {
+  font-family: "Libre Caslon Text";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/libre-caslon-text-italic-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libre Caslon Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/libre-caslon-text-normal-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libre Caslon Text";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/libre-caslon-text-normal-700.woff2") format("woff2");
+}
+/* Icon font must use font-display: block (NOT swap). The icon name is real
+   text (a ligature) — with swap, the fallback font prints the raw name, e.g.
+   "dark_mode" or "home_max", until the font arrives, which is very visible on
+   throttled mobile connections. block keeps the text invisible during the
+   font-load window; the font is preloaded in BaseLayout.astro so it lands
+   well within the ~3s block period. This mirrors Google's own hosting of
+   Material Symbols. */
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("/fonts/material-symbols-subset.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Work Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/work-sans-normal-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Work Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/work-sans-normal-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Work Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/work-sans-normal-700.woff2") format("woff2");
+}
+
 body {
   background-color: #f9f9fc;
   -webkit-font-smoothing: antialiased;
@@ -112,8 +188,42 @@ article p {
   background-color: #1a1c1e;
 }
 
+/* Icon glyph class. The font-family declaration is ESSENTIAL — without it the
+   spans render their ligature names ("nature", "auto_stories", …) as ordinary
+   body text. Mirrors Google's canonical Material Symbols class; font-size is
+   deliberately omitted so the design keeps controlling icon sizes through
+   Tailwind classes (text-sm, etc.). */
 .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Filled variant (active bottom-nav icon). Kept as an unlayered rule so it
+   wins the cascade over the base FILL 0 declaration above — a Tailwind
+   arbitrary-property utility in @layer utilities would lose to this
+   unlayered base rule. */
+.icon-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Theme-toggle icon is rendered via ::before from a data-icon attribute
+   instead of as a text node. The span therefore has no text content, so the
+   glyph is not counted as visible label text — which was triggering
+   Lighthouse's label-content-name-mismatch on the icon button (the glyph
+   text "dark_mode" did not match the aria-label "Toggle dark mode"). */
+.material-symbols-outlined[data-icon]::before {
+  content: attr(data-icon);
+  font-family: 'Material Symbols Outlined';
 }
 
 .atmospheric-overlay {
@@ -202,7 +312,7 @@ table tbody tr:hover {
   border-left-color: #715a3e;
   padding-left: 1.5rem;
   font-style: italic;
-  font-family: "Libre Caslon Text", serif;
+  font-family: "Libre Caslon Text", "Libre Caslon Fallback", serif;
   font-size: 1.25rem;
   line-height: 1.75rem;
   color: #334537;
@@ -216,4 +326,33 @@ table tbody tr:hover {
   line-height: inherit;
   font-weight: inherit;
   color: inherit;
+}
+
+/* Ensure list markers are visible and properly aligned */
+.prose ol,
+.prose ul {
+  list-style-position: outside;
+  padding-left: 1.5em;
+  margin-left: 0.5em;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+/* Ensure list markers have proper color and alignment */
+.prose li {
+  display: list-item;
+  margin-left: 0;
+  padding-left: 0.25em;
+}
+
+.prose li::marker {
+  color: inherit !important;
+  font-weight: normal !important;
+  font-size: inherit !important;
 }
